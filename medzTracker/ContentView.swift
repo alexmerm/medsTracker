@@ -5,10 +5,13 @@
 //  Created by Alex Kaish on 3/4/22.
 //
 
+//View Class
+
 import SwiftUI
 import CoreData
 
 struct ContentView: View {
+    //CoreData things
     @Environment(\.managedObjectContext) private var viewContext
 
     @FetchRequest(
@@ -16,32 +19,28 @@ struct ContentView: View {
         animation: .default)
     private var items: FetchedResults<Item>
 
+    // MARK: Actual View
     var body: some View {
-        NavigationView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp!, formatter: itemFormatter)")
-                    } label: {
-                        Text(item.timestamp!, formatter: itemFormatter)
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-            Text("Select an item")
-        }
+        Text("test")
+
     }
 
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // MARK: CoreData Template Funcs
     private func addItem() {
         withAnimation {
             let newItem = Item(context: viewContext)
