@@ -10,10 +10,12 @@ import SwiftUI
 @main
 struct medzTrackerApp: App {
     let persistenceController = PersistenceController.shared
-
+    
+    //Initialize ViewModel
+    let tracker  = MedicineTracker()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(viewModel: tracker)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
