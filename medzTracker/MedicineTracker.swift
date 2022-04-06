@@ -12,6 +12,7 @@ class MedicineTracker : ObservableObject {
 
 
     //private(set) means other things can see the model but can't change it
+    //Creates the model
     @Published private(set) var model : MedsDB = MedsDB()
     
     ///These Methods are for intents from the view to modify or access the model

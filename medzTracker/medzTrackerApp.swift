@@ -15,6 +15,7 @@ struct medzTrackerApp: App {
     let tracker  = MedicineTracker()
     var body: some Scene {
         WindowGroup {
+            //Put viewmodel into view
             ContentView(viewModel: tracker)
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }

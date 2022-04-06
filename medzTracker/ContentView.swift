@@ -19,45 +19,49 @@ struct ContentView: View {
     // MARK: Actual View
     var body: some View {
         
-        VStack {
-            //Title Bar
-            HStack(){
-                Spacer()
-                //TODO: Figure out how to make this title actually centered
-                Image(systemName: "pills").font(.title)
-                Text("MedsTracker")
-                Spacer()
-                Button {
-                    viewModel.insertDummyData()
-                    //TODO: IMPLEMENT THIS
-                } label: {
-                    Image(systemName: "plus.circle")
-                }.font(.title)
-                    .padding(.trailing)
-            }.font(.largeTitle)
-            Spacer()
-            //Medicine List
-            ZStack{
-                //Background of List
-                Color(UIColor.secondarySystemBackground)
-                //Text Behind List
-                VStack {
-                    Image(systemName: "pills")
+        NavigationView {
+                            
+                List(viewModel.meds) { med in
+                        MedicationRow(medicine: med)
+                }
+                    .toolbar(content: {
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            HStack {
+                                Image(systemName: "pills")
+                                Text("MedsTracker")
+                            }.font(.title)
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                viewModel.insertDummyData()
+                            } label: {
+                                Image(systemName: "plus.circle")
+                            }.font(.title2)
+                        }
+                    })
+            }
+
+        }
+    
+}
+
+struct OldTitleBar : View {
+    var viewModel : MedicineTracker
+    var body: some View {
+    HStack(){
+                    Spacer()
+                    //TODO: Figure out how to make this title actually centered
+                    Image(systemName: "pills").font(.title)
                     Text("MedsTracker")
                     Spacer()
-                }.padding(30)
-                    .font(.largeTitle)
-                //Actual List
-                List(viewModel.meds) { med in
-                    MedicationRowView(medicine: med)
-                }
-                    .onAppear {
-                        // Set the default background to clear
-                        UITableView.appearance().backgroundColor = .clear
-                    }
-            }
-            //TODO: Navigation Bar
-        }
+                    Button {
+                        viewModel.insertDummyData()
+                        //TODO: IMPLEMENT THIS
+                    } label: {
+                        Image(systemName: "plus.circle")
+                    }.font(.title)
+                        .padding(.trailing)
+            }.font(.largeTitle)
     }
 }
 
@@ -69,8 +73,9 @@ private let itemFormatter: DateFormatter = {
 }()
 
 // MARK: Medication Row Definition
-struct MedicationRowView : View {
+struct MedicationRow : View {
     //init from medication object
+    ///lowkey I think *this* is the stuff that should be done in viewController but whatenvs
     init(medicine inputMed : MedsDB.Medication) {
         medName = inputMed.name
         medDosage = inputMed.readableDosage
@@ -109,11 +114,8 @@ struct MedicationRowView : View {
                     }
                 }.font(.footnote)
             }
-
         }
     }
-    
-    
 }
 
 
