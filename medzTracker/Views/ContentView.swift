@@ -22,7 +22,12 @@ struct ContentView: View {
         NavigationView {
                             
                 List(viewModel.meds) { med in
+                    NavigationLink {
+                        DetailsView(medicine: med)
+                    } label: {
                         MedicationRow(medicine: med)
+                    }
+                        
                 }
                     .toolbar(content: {
                         ToolbarItem(placement: .navigationBarLeading) {
@@ -45,25 +50,6 @@ struct ContentView: View {
     
 }
 
-struct OldTitleBar : View {
-    var viewModel : MedicineTracker
-    var body: some View {
-    HStack(){
-                    Spacer()
-                    //TODO: Figure out how to make this title actually centered
-                    Image(systemName: "pills").font(.title)
-                    Text("MedsTracker")
-                    Spacer()
-                    Button {
-                        viewModel.insertDummyData()
-                        //TODO: IMPLEMENT THIS
-                    } label: {
-                        Image(systemName: "plus.circle")
-                    }.font(.title)
-                        .padding(.trailing)
-            }.font(.largeTitle)
-    }
-}
 
 private let itemFormatter: DateFormatter = {
     let formatter = DateFormatter()
@@ -125,9 +111,7 @@ struct ContentView_Previews: PreviewProvider {
         tracker.insertDummyData()
         
         
-        
-
-
+    
         return ContentView(viewModel: tracker).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
     }
 }

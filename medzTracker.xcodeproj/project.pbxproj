@@ -20,6 +20,7 @@
 		CF214D7C27D2C8060015C9BB /* MedicineTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7B27D2C8060015C9BB /* MedicineTracker.swift */; };
 		CF214D7E27D2CF400015C9BB /* MedsDBTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7D27D2CF400015C9BB /* MedsDBTest.swift */; };
 		CF214D8027D6A40C0015C9BB /* testClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7F27D6A40C0015C9BB /* testClass.swift */; };
+		CF8C714727FE4FB800186570 /* DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C714627FE4FB800186570 /* DetailsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		CF214D7B27D2C8060015C9BB /* MedicineTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicineTracker.swift; sourceTree = "<group>"; };
 		CF214D7D27D2CF400015C9BB /* MedsDBTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedsDBTest.swift; sourceTree = "<group>"; };
 		CF214D7F27D6A40C0015C9BB /* testClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = testClass.swift; path = medzTracker/testClass.swift; sourceTree = "<group>"; };
+		CF8C714627FE4FB800186570 /* DetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,9 +109,9 @@
 		CF214D4927D2C1870015C9BB /* medzTracker */ = {
 			isa = PBXGroup;
 			children = (
+				CFBDA2C727FE56F70043BB0E /* Model */,
+				CF8C714427FE4F6C00186570 /* Views */,
 				CF214D4A27D2C1870015C9BB /* medzTrackerApp.swift */,
-				CF214D4C27D2C1870015C9BB /* ContentView.swift */,
-				CF214D7927D2C78F0015C9BB /* MedsDB.swift */,
 				CF214D7B27D2C8060015C9BB /* MedicineTracker.swift */,
 				CF214D4E27D2C1880015C9BB /* Assets.xcassets */,
 				CF214D5327D2C1880015C9BB /* Persistence.swift */,
@@ -143,6 +145,23 @@
 				CF214D6C27D2C1880015C9BB /* medzTrackerUITestsLaunchTests.swift */,
 			);
 			path = medzTrackerUITests;
+			sourceTree = "<group>";
+		};
+		CF8C714427FE4F6C00186570 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				CF214D4C27D2C1870015C9BB /* ContentView.swift */,
+				CF8C714627FE4FB800186570 /* DetailsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CFBDA2C727FE56F70043BB0E /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				CF214D7927D2C78F0015C9BB /* MedsDB.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,6 +299,7 @@
 				CF214D5427D2C1880015C9BB /* Persistence.swift in Sources */,
 				CF214D4D27D2C1870015C9BB /* ContentView.swift in Sources */,
 				CF214D8027D6A40C0015C9BB /* testClass.swift in Sources */,
+				CF8C714727FE4FB800186570 /* DetailsView.swift in Sources */,
 				CF214D7C27D2C8060015C9BB /* MedicineTracker.swift in Sources */,
 				CF214D4B27D2C1870015C9BB /* medzTrackerApp.swift in Sources */,
 			);
