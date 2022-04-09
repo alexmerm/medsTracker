@@ -37,10 +37,16 @@ struct ContentView: View {
                             }.font(.title)
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
+                            NavigationLink(destination: AddMedicineView()) {
+                                Image(systemName: "plus.circle")
+                            }.font(.title2)
+  
+                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
                             Button {
                                 viewModel.insertDummyData()
                             } label: {
-                                Image(systemName: "plus.circle")
+                                Image(systemName: "plus.square")
                             }.font(.title2)
                         }
                     })

@@ -25,7 +25,7 @@ struct MedsDB {
     var medications : [Medication] = [] //Store Medications heres
     
     //Returns ID of New Medicaiton
-    mutating func addMedication(medName : String, dosage : Int?, dosageUnit : String?, schedule : Medication.ScheduleType, maxDosage : Int?, reminders : Bool)  -> UUID {
+    mutating func addMedication(medName : String, dosage : Int?, dosageUnit : String?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool)  -> UUID {
         let med = Medication(name: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders, pastDoses: [], dateComponentsFormatter: dateComponentsFormatter, dateFormatter: dateFormatter)
         medications.append(med)
         return med.id
@@ -73,7 +73,7 @@ struct MedsDB {
     struct Medication : Equatable,Identifiable {
         //ID
         let id = UUID()
-        enum ScheduleType {
+        enum Schedule : Hashable {
             case intervalSchedule(interval: TimeInterval)
             case specificTime(time: Date)
             case asNeeded
@@ -82,7 +82,7 @@ struct MedsDB {
         var name : String
         var dosage : Int?
         var dosageUnit : String?
-        var schedule : ScheduleType
+        var schedule : Schedule
         var maxDosage : Int?
         var reminders : Bool
         var pastDoses :[Dosage]

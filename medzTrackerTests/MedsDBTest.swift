@@ -33,7 +33,7 @@ class MedsDBTest: XCTestCase {
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         db = MedsDB()
-        medID = db.addMedication(medName: "Adderall IR", dosage: 10, dosageUnit: "mg", schedule: MedsDB.Medication.ScheduleType.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
+        medID = db.addMedication(medName: "Adderall IR", dosage: 10, dosageUnit: "mg", schedule: MedsDB.Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
 //        med.logDosage(time: Date.now, amount: 10)
 
     }

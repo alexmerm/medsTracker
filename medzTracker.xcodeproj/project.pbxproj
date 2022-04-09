@@ -21,6 +21,7 @@
 		CF214D7E27D2CF400015C9BB /* MedsDBTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7D27D2CF400015C9BB /* MedsDBTest.swift */; };
 		CF214D8027D6A40C0015C9BB /* testClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7F27D6A40C0015C9BB /* testClass.swift */; };
 		CF8C714727FE4FB800186570 /* DetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C714627FE4FB800186570 /* DetailsView.swift */; };
+		CFBDA2C927FE7B000043BB0E /* AddMedicineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFBDA2C827FE7B000043BB0E /* AddMedicineView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,6 +59,7 @@
 		CF214D7D27D2CF400015C9BB /* MedsDBTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedsDBTest.swift; sourceTree = "<group>"; };
 		CF214D7F27D6A40C0015C9BB /* testClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = testClass.swift; path = medzTracker/testClass.swift; sourceTree = "<group>"; };
 		CF8C714627FE4FB800186570 /* DetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsView.swift; sourceTree = "<group>"; };
+		CFBDA2C827FE7B000043BB0E /* AddMedicineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMedicineView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -151,6 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				CF214D4C27D2C1870015C9BB /* ContentView.swift */,
+				CFBDA2C827FE7B000043BB0E /* AddMedicineView.swift */,
 				CF8C714627FE4FB800186570 /* DetailsView.swift */,
 			);
 			path = Views;
@@ -295,6 +298,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF214D5727D2C1880015C9BB /* medzTracker.xcdatamodeld in Sources */,
+				CFBDA2C927FE7B000043BB0E /* AddMedicineView.swift in Sources */,
 				CF214D7A27D2C78F0015C9BB /* MedsDB.swift in Sources */,
 				CF214D5427D2C1880015C9BB /* Persistence.swift in Sources */,
 				CF214D4D27D2C1870015C9BB /* ContentView.swift in Sources */,
