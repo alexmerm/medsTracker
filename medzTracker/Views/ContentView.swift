@@ -68,7 +68,7 @@ private let itemFormatter: DateFormatter = {
 struct MedicationRow : View {
     //init from medication object
     ///lowkey I think *this* is the stuff that should be done in viewController but whatenvs
-    init(medicine inputMed : MedsDB.Medication) {
+    init(medicine inputMed : Medication) {
         medName = inputMed.name
         medDosage = inputMed.readableDosage
         timeDelta = inputMed.getLatestDosage()?.timeSinceDosageString

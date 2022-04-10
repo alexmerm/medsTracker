@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DetailsView: View {
-    var medicine :MedsDB.Medication
+    var medicine :Medication
     var body: some View {
         Text("Hello, \(medicine.name)!")
     }
