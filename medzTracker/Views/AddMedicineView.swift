@@ -32,7 +32,6 @@ struct AddMedicineView: View {
     
     var body: some View {
         
-        NavigationView {
             Form {
                 Section(header: Text("Medication Info")) {
                     HStack{
@@ -114,8 +113,7 @@ struct AddMedicineView: View {
                         }
                     }
                 }
-        }
-    }
+            }
     func verifyMedication() -> Bool {
         return true
     }

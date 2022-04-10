@@ -50,9 +50,9 @@ struct ContentView: View {
                             }.font(.title2)
                         }
                     })
-            }
+        }.navigationViewStyle(StackNavigationViewStyle()) //need this so it displays correct on iPad
 
-        }
+    }
     
 }
 
