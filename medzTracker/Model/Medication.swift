@@ -16,18 +16,56 @@ struct Medication : Equatable,Identifiable {
     }
     //define variables
     var name : String
-    var dosage : Int?
-    var dosageUnit : String?
+    enum DosageUnit : CaseIterable, Hashable {        
+        static var allCases: [DosageUnit] {
+            return [mg, mcg, g,kg,ml,L,cc,pills,tablets,other(unit: "otherUnit")]
+        }
+        case mcg
+        case mg
+        case g
+        case kg
+        case L
+        case ml
+        case cc
+        case pills
+        case tablets
+        case other(unit : String)
+        var description : String {
+            switch self {
+            case .mg:
+                return "mg"
+            case .g:
+                return "g"
+            case .kg:
+                return "kg"
+            case .mcg:
+                return "mcg"
+            case .L:
+                return "L"
+            case .ml:
+                return "ml"
+            case .cc:
+                return "cc"
+            case .pills:
+                return "pills"
+            case .tablets:
+                return "tablets"
+            case .other(let unit):
+                return unit
+            }
+        }
+    }
+    var dosage : Double?
+    var dosageUnit : DosageUnit?
     var schedule : Schedule
     var maxDosage : Int?
     var reminders : Bool
     var pastDoses :[Dosage]
     var dateComponentsFormatter : DateComponentsFormatter
     var dateFormatter : DateFormatter
-    
     var readableDosage : String? {
         if let dosage = dosage, let dosageUnit = dosageUnit {
-            return "\(dosage) \(dosageUnit)"
+            return "\(dosage) \(dosageUnit.description)"
         } else {
             return nil
         }

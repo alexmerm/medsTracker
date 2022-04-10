@@ -10,7 +10,7 @@ import SwiftUI
 struct AddMedicineView: View {
     @State private var medication_name : String = ""
     @State private var dosage_string : String = ""
-    @State private var dosage_unit: String = ""
+    @State private var dosage_unit: Medication.DosageUnit?
     enum ScheduleType : Hashable, Equatable {
         case intervalSchedule
         case specificTime
@@ -25,13 +25,10 @@ struct AddMedicineView: View {
     
     @State var wantReminders : Bool = true
     
+    
     //Vars for interval Time selection
     let hours = [Int](0..<23)
     let minutes = [Int](0..<59)
-    
-    func setScheduleType(type : ScheduleType?) {
-        self.scheduleType = type
-    }
     
     var body: some View {
         
@@ -46,7 +43,15 @@ struct AddMedicineView: View {
                         Text("Dosage")
                         TextField("amt", text: $dosage_string).keyboardType(.numberPad)
                         //Picker dosage unitp
-                        TextField("unit", text: $dosage_unit)
+                        //TextField("unit", text: $dosage_unit)
+                        Picker("Unit", selection: $dosage_unit) {
+                            ForEach(Medication.DosageUnit.allCases, id:
+                                    \.self) { unit in
+                                Text(unit.description).tag(Optional(unit))
+                                Text("other")
+                                //TODO: Implement other unit here
+                            }
+                        }
                     }
                 }
                 Section(header: Text("Schedule")) {
@@ -101,6 +106,22 @@ struct AddMedicineView: View {
                 
                 
             }.navigationTitle("Add a Medication")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: self.addMedication) {
+                            Text("Save")
+                            
+                        }
+                    }
+                }
+        }
+    }
+    func verifyMedication() -> Bool {
+        return true
+    }
+    func addMedication() {
+        if verifyMedication() {
+            print("we did it")
         }
     }
 }

@@ -25,7 +25,7 @@ struct MedsDB {
     var medications : [Medication] = [] //Store Medications heres
     
     //Returns ID of New Medicaiton
-    mutating func addMedication(medName : String, dosage : Int?, dosageUnit : String?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool)  -> UUID {
+    mutating func addMedication(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool)  -> UUID {
         let med = Medication(name: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders, pastDoses: [], dateComponentsFormatter: dateComponentsFormatter, dateFormatter: dateFormatter)
         medications.append(med)
         return med.id
