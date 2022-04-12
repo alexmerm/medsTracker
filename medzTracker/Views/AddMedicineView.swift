@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct AddMedicineView: View {
-    @State private var medication_name : String = ""
-    @State private var dosage_string : String = ""
-    @State private var dosage_unit: Medication.DosageUnit?
-    static let INITIAL_CUSTOM_UNIT = "Custom"
+    //Medication Variables
+    @State var medication_name : String = ""
+    @State var dosage_string : String = ""
+    @State var dosage_unit: Medication.DosageUnit?
     @State var customDosageUnit = INITIAL_CUSTOM_UNIT
     @State var isAddingCustomUnit = false
     enum ScheduleType : Hashable, Equatable {
@@ -19,8 +19,8 @@ struct AddMedicineView: View {
         case specificTime
         case asNeeded
     }
-    @State internal var scheduleType : ScheduleType? = nil
-    @State private var intervalTime : TimeInterval = .zero
+    @State var scheduleType : ScheduleType? = nil
+    @State var intervalTime : TimeInterval = .zero
     @State var specificTime : Date = .now
     
     @State var interval_hour : Int? = nil
@@ -29,34 +29,32 @@ struct AddMedicineView: View {
     @State var wantReminders : Bool = true
     
     
+    static let INITIAL_CUSTOM_UNIT = "Custom"
     //Vars for interval Time selection
-    let hours = [Int](0..<23)
-    let minutes = [Int](0..<59)
+    static let hours = [Int](0..<23)
+    static let minutes = [Int](0..<59)
     
     var body: some View {
-        
-        
-        return Form {
-            Section(header: Text("Medication Info")) {
-                HStack{
-                    Text("Medication Name")
-                    TextField("Required", text: $medication_name)
-                }
-                HStack{
-                    Text("Dosage")
-                    TextField("amt", text: $dosage_string).keyboardType(.numberPad)
-                    //Picker dosage unitp
-                    //TextField("unit", text: $dosage_unit)
-                    //Put navigationLink into ZStack with the picker
-                    ZStack {
-                        NavigationLink(destination:  customTextFieldView(customDosageUnit: $customDosageUnit, isAddingCustomUnit: $isAddingCustomUnit), isActive: $isAddingCustomUnit, label:{ Text("NavigationLink")}).hidden().disabled(true)
+        ZStack {
+            
+            //Form Actually Displayed
+            Form {
+                Section(header: Text("Medication Info")) {
+                    HStack{
+                        Text("Medication Name")
+                        TextField("Required", text: $medication_name)
+                    }
+                    HStack{
+                        Text("Dosage")
+                        TextField("amt", text: $dosage_string).keyboardType(.numberPad)
                         
                         Picker("Unit", selection: $dosage_unit) {
                             ForEach(Medication.DosageUnit.allCases, id:
                                         \.self) { unit in
                                 Text(unit.description).tag(Optional(unit))
                             }
-                            Text(customDosageUnit).tag(Optional(Medication.DosageUnit.other(unit: "TEMPCUSTOMUNIT")))
+                            
+                            Text(customDosageUnit).tag(Optional(Medication.DosageUnit.other(unit: "TEMPCUSTOMUNIT"))) //This Val isn't actually used, we replace it with a diff DosageUnit whnen submitting
                         }
                         //Whenever something is selected
                         .onChange(of: self.dosage_unit) { newunit in
@@ -64,7 +62,6 @@ struct AddMedicineView: View {
                             if let unit = newunit {
                                 //if a custom unit was selected
                                 if case Medication.DosageUnit.other(unit: _ ) = unit{
-                                    print("currentString: \(customDosageUnit)")
                                     //if the custom Unit is still set to the original unit, blank it
                                     if customDosageUnit == AddMedicineView.INITIAL_CUSTOM_UNIT {
                                         customDosageUnit = ""
@@ -79,74 +76,63 @@ struct AddMedicineView: View {
                             }
                             
                         }
-                    
                     }
-                    
-                    
-                    
-                }
-            }
-            
-            Section(header: Text("Schedule")) {
-                VStack(alignment: .leading) {
-                    Text("Schedule Type").multilineTextAlignment(.leading)
-                    Picker("ScheduleType", selection: $scheduleType) {
-                        Text("As Needed").tag(Optional(ScheduleType.asNeeded))
-                        Text("Inteval").tag(Optional(ScheduleType.intervalSchedule))
-                        Text("Specific Time").tag(Optional(ScheduleType.specificTime))
-                    }.pickerStyle(.segmented)
-                }
-                switch scheduleType {
-                case .asNeeded:
-                    Text("asNeeded")
-                case .specificTime:
-                    Text("SpecificTime")
-                    DatePicker("Time",selection: $specificTime, displayedComponents:.hourAndMinute).datePickerStyle(.compact)
-                    
-                case .intervalSchedule:
-                    Text("intervalSchedule")
-                    
-                    HStack() {
-                        Text("Interval: ")
-                            .fontWeight(.bold)
-                        Picker("Hours",selection: $interval_hour) {
-                            ForEach(self.hours, id: \.self) { hour in
-                                Text("\(hour) h").tag(hour)
-                            }
-                        }.pickerStyle(.menu)
-                        Text(":")
-                        
-                        Picker("Minutes", selection: $interval_minute) {
-                            ForEach(self.minutes,id: \.self) { minute in
-                                Text("\(minute) m").tag(minute)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                    }
-                case.none:
-                    Text("Please select a schedule type")
                 }
                 
-            }
-            if scheduleType == .specificTime || scheduleType == .intervalSchedule {
-                Section(header: Text("Reminders")) {
-                    Toggle("Reminders?", isOn: $wantReminders)
+                Section(header: Text("Schedule")) {
+                    VStack(alignment: .leading) {
+                        Text("Schedule Type").multilineTextAlignment(.leading)
+                        Picker("ScheduleType", selection: $scheduleType) {
+                            Text("As Needed").tag(Optional(ScheduleType.asNeeded))
+                            Text("Inteval").tag(Optional(ScheduleType.intervalSchedule))
+                            Text("Specific Time").tag(Optional(ScheduleType.specificTime))
+                        }.pickerStyle(.segmented)
+                    }
+                    switch scheduleType {
+                    case .asNeeded:
+                        Text("No Further Detail Needed")
+                    case .specificTime:
+                        DatePicker("Time",selection: $specificTime, displayedComponents:.hourAndMinute).datePickerStyle(.compact)
+                    case .intervalSchedule:
+                        HStack() {
+                            Text("Interval: ")
+                                .fontWeight(.bold)
+                            Picker("Hours",selection: $interval_hour) {
+                                ForEach(AddMedicineView.hours, id: \.self) { hour in
+                                    Text("\(hour) h").tag(hour)
+                                }
+                            }.pickerStyle(.menu)
+                            Text(":")
+                            
+                            Picker("Minutes", selection: $interval_minute) {
+                                ForEach(AddMedicineView.minutes,id: \.self) { minute in
+                                    Text("\(minute) m").tag(minute)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
+                    case.none:
+                        Text("Please select a schedule type")
+                    }
+                    
                 }
-            }
-            
-            
-            
-            
-            
-        }.navigationTitle("Add a Medication")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: self.addMedication) {
-                        Text("Save")
-                        
+                if scheduleType == .specificTime || scheduleType == .intervalSchedule {
+                    Section(header: Text("Reminders")) {
+                        Toggle("Reminders?", isOn: $wantReminders)
                     }
                 }
-            }
+                
+            }.navigationTitle("Add a Medication")
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: self.addMedication) {
+                            Text("Save")
+                        }
+                    }
+                }
+            //Invisible Link to move to CustomUnit Page
+            NavigationLink(destination:  customTextFieldView(customDosageUnit: $customDosageUnit, isAddingCustomUnit: $isAddingCustomUnit), isActive: $isAddingCustomUnit, label:{ Text("NavigationLink")}).hidden().disabled(true)
+        }
     }
     func verifyMedication() -> Bool {
         return true
@@ -174,7 +160,7 @@ struct customTextFieldView : View  {
                         Button(action: { self.isAddingCustomUnit.toggle()})
                         { Text("save")}
                     }
-            })
+                })
         }
     }
 }
@@ -186,7 +172,7 @@ struct AddMedicineView_Previews: PreviewProvider {
             AddMedicineView(scheduleType: .intervalSchedule)
             //            AddMedicineView(scheduleType: .specificTime)
             //            AddMedicineView(scheduleType: .asNeeded)
-            //            AddMedicineView()
+            //                        AddMedicineView()
         }
     }
 }

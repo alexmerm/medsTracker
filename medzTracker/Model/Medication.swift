@@ -18,7 +18,7 @@ struct Medication : Equatable,Identifiable {
     var name : String
     enum DosageUnit : CaseIterable, Hashable {        
         static var allCases: [DosageUnit] {
-            return [mg, mcg, g,kg,ml,L,cc,pills,tablets,other(unit: "otherUnit")]
+            return [mg, mcg, g,kg,ml,L,cc,pills,tablets] //Excluding other unit
         }
         case mcg
         case mg
