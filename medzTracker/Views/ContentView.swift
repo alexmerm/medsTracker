@@ -15,6 +15,7 @@ import CoreData
 struct ContentView: View {
     
     @ObservedObject var viewModel : MedicineTracker //ViewModel will be passed in
+    @State var isOnAddingScreen = false
 
     // MARK: Actual View
     var body: some View {
@@ -37,7 +38,7 @@ struct ContentView: View {
                             }.font(.title)
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: AddMedicineView()) {
+                            NavigationLink(destination: AddMedicineView(viewModel: viewModel, isOnAddingScreen: $isOnAddingScreen), isActive: $isOnAddingScreen) {
                                 Image(systemName: "plus.circle")
                             }.font(.title2)
   

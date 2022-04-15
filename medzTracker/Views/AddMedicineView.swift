@@ -6,8 +6,14 @@
 //
 
 import SwiftUI
+import Combine
 
 struct AddMedicineView: View {
+    @ObservedObject var viewModel : MedicineTracker
+    @Binding var isOnAddingScreen : Bool
+    @State var errorIsDisplayed : Bool = false
+    @State var errorText = ""
+    
     //Medication Variables
     @State var medication_name : String = ""
     @State var dosage_string : String = ""
@@ -20,13 +26,15 @@ struct AddMedicineView: View {
         case asNeeded
     }
     @State var scheduleType : ScheduleType? = nil
-    @State var intervalTime : TimeInterval = .zero
-    @State var specificTime : Date = .now
     
-    @State var interval_hour : Int? = nil
-    @State var interval_minute : Int? = nil
+    //Specific time variabels
+    @State var specificTime : Date = .now
+    //Interval variabels
+    @State var interval_hour : Int = 0
+    @State var interval_minute : Int = 0
     
     @State var wantReminders : Bool = true
+    
     
     
     static let INITIAL_CUSTOM_UNIT = "Custom"
@@ -46,7 +54,14 @@ struct AddMedicineView: View {
                     }
                     HStack{
                         Text("Dosage")
-                        TextField("amt", text: $dosage_string).keyboardType(.numberPad)
+                        TextField("amt", text: $dosage_string).keyboardType(.decimalPad)
+                        //Special code to make sure it actually just has numbers
+                            .onReceive(Just(dosage_string)) { newValue in
+                                let filtered = newValue.filter { "0123456789.".contains($0) }
+                                if filtered != newValue {
+                                    self.dosage_string = filtered
+                                }
+                            }
                         
                         Picker("Unit", selection: $dosage_unit) {
                             ForEach(Medication.DosageUnit.allCases, id:
@@ -84,7 +99,7 @@ struct AddMedicineView: View {
                         Text("Schedule Type").multilineTextAlignment(.leading)
                         Picker("ScheduleType", selection: $scheduleType) {
                             Text("As Needed").tag(Optional(ScheduleType.asNeeded))
-                            Text("Inteval").tag(Optional(ScheduleType.intervalSchedule))
+                            Text("Interval").tag(Optional(ScheduleType.intervalSchedule))
                             Text("Specific Time").tag(Optional(ScheduleType.specificTime))
                         }.pickerStyle(.segmented)
                     }
@@ -127,6 +142,10 @@ struct AddMedicineView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: self.addMedication) {
                             Text("Save")
+                        }.alert(isPresented: $errorIsDisplayed) {
+                            Alert(title:
+                                    Text(errorText)
+                            )
                         }
                     }
                 }
@@ -134,30 +153,98 @@ struct AddMedicineView: View {
             NavigationLink(destination:  customTextFieldView(customDosageUnit: $customDosageUnit, isAddingCustomUnit: $isAddingCustomUnit), isActive: $isAddingCustomUnit, label:{ Text("NavigationLink")}).hidden().disabled(true)
         }
     }
-    func verifyMedication() -> Bool {
-        return true
+    enum VerifyResult : Equatable {
+        case success
+        case failure(error: String)
+    }
+    func verifyMedication() -> VerifyResult {
+        guard medication_name != "" else {
+            return .failure(error: "Medication name must be set")
+        }
+        //if a dosage amt is selected, a unit must also be selected
+        if dosage_string != "" {
+            //Verify a unit is selected
+            //Shoould prob throw an alert if not selected
+            guard let _ = dosage_unit else {
+                return .failure(error: "Must select a dosage unit")
+            }
+        }
+        guard let scheduleType = scheduleType else {
+            return .failure(error: "Must select a schedule type")
+        }
+        //now scheduleType is no longer optional
+        switch scheduleType {
+        case .intervalSchedule:
+            guard (interval_minute != 0 || interval_hour != 0) else {
+                return .failure(error: "Interval cannot be 0 ")
+            }
+            return .success
+        case .specificTime,.asNeeded:
+            //nothing to check for specifictime
+            return .success
+        }
     }
     func addMedication() {
-        if verifyMedication() {
-            print("we did it")
+        let result = verifyMedication()
+        guard result == VerifyResult.success else {
+            switch result {
+            case .success:
+                print("Woo it worked, but this will never exec ")
+            case .failure(let error):
+                print("Error!! \(error)") //and throw some alert
+                errorText = error
+                errorIsDisplayed = true
+            }
+            return
         }
+        //if other, make dosage unit with correct string
+        if let unit = dosage_unit {
+            if case Medication.DosageUnit.other(unit: _ ) = unit{
+                self.dosage_unit = Medication.DosageUnit.other(unit: customDosageUnit)
+            }
+        }
+        //Create schedule unit
+        guard let scheduleType = scheduleType else {
+            return //this will never flop return bc its issues
+        }
+        let schedule : Medication.Schedule
+        switch scheduleType {
+        case .asNeeded:
+            schedule = Medication.Schedule.asNeeded
+        case .intervalSchedule:
+            let interval = TimeInterval(interval_hour * 3600 + interval_minute * 60)
+            schedule = Medication.Schedule.intervalSchedule(interval: interval)
+        case .specificTime:
+            schedule = Medication.Schedule.specificTime(time: specificTime)
+        }
+        //actually add to DB
+        let _ = viewModel.addMedicationToModel(medName: medication_name, dosage: Double(dosage_string), dosageUnit: dosage_unit, schedule: schedule, maxDosage: nil, reminders: wantReminders)
+        //Need to make it leave this page lmao
+        isOnAddingScreen = false
+        
     }
 }
 
 struct customTextFieldView : View  {
     @Binding var customDosageUnit : String
     @Binding var isAddingCustomUnit : Bool
+    @FocusState var isFocusedOnTextField : Bool
     var body: some View {
         Form {
             HStack{
                 Text("Enter Unit :")
-                TextField("Custom Unit", text: $customDosageUnit).disableAutocorrection(true)
-                
-                
-            }.navigationBarBackButtonHidden(true)
+                TextField("Custom Unit", text: $customDosageUnit).focused($isFocusedOnTextField)
+                    .disableAutocorrection(true)
+            }.onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    isFocusedOnTextField = true
+                }
+            }
+            .navigationBarBackButtonHidden(true)
                 .toolbar(content: {
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button(action: { self.isAddingCustomUnit.toggle()})
+                        Button(action: {
+                            self.isAddingCustomUnit.toggle()})
                         { Text("save")}
                     }
                 })
@@ -168,8 +255,10 @@ struct customTextFieldView : View  {
 
 struct AddMedicineView_Previews: PreviewProvider {
     static var previews: some View {
+        let viewModel = MedicineTracker()
+        //tracker.insertDummyData()
         Group {
-            AddMedicineView(scheduleType: .intervalSchedule)
+            AddMedicineView(viewModel: viewModel,isOnAddingScreen: Binding.constant(true), scheduleType: .intervalSchedule)
             //            AddMedicineView(scheduleType: .specificTime)
             //            AddMedicineView(scheduleType: .asNeeded)
             //                        AddMedicineView()
