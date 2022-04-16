@@ -8,9 +8,9 @@
 //THIS IS THE VIEWMODEL
 import Foundation
 
-class MedicineTracker : ObservableObject {
+class MedicineTracker : ObservableObject { //TODO: make the DB an observable object too I think, 
 
-
+    
     //private(set) means other things can see the model but can't change it
     //Creates the model
     @Published private(set) var model : MedsDB = MedsDB()

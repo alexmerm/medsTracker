@@ -9,24 +9,39 @@ import Foundation
 
 //THIS IS THE MODEL
 
-struct MedsDB {
-    let dateFormatter : DateFormatter
-    let dateComponentsFormatter : DateComponentsFormatter
+struct MedsDB : Codable {
+    static let dateFormatter : DateFormatter  = DateFormatter()// and this
+    static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()//Need to make this static
     //DB Initializers
     init() {
-        dateFormatter = DateFormatter()
-        dateComponentsFormatter = DateComponentsFormatter()
+        //dateFormatter = DateFormatter()
+        //dateComponentsFormatter = DateComponentsFormatter()
+        //Inits each of them corrrectly (should be static but how?, prob stored in plist or smth
+        MedsDB.dateFormatter.dateStyle = .none
+        MedsDB.dateFormatter.timeStyle = .short
+        MedsDB.dateComponentsFormatter.allowedUnits = [.hour, .minute]
+        MedsDB.dateComponentsFormatter.zeroFormattingBehavior = .pad
+    }
+    
+    static func getDateFormatter() -> DateFormatter {
+        let dateFormatter : DateFormatter  = DateFormatter()
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
+
+        return dateFormatter
+    }
+    static func getDateComponentFormatter() -> DateComponentsFormatter {
+        let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()
         dateComponentsFormatter.allowedUnits = [.hour, .minute]
         dateComponentsFormatter.zeroFormattingBehavior = .pad
+        return dateComponentsFormatter
     }
     
     var medications : [Medication] = [] //Store Medications heres
     
     //Returns ID of New Medicaiton
     mutating func addMedication(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool)  -> UUID {
-        let med = Medication(name: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders, pastDoses: [], dateComponentsFormatter: dateComponentsFormatter, dateFormatter: dateFormatter)
+        let med = Medication(name: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders, pastDoses: [])
         medications.append(med)
         return med.id
     }

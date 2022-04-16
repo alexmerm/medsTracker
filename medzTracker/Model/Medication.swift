@@ -6,17 +6,29 @@
 //
 
 import Foundation
-struct Medication : Equatable,Identifiable {
+struct Medication : Equatable,Identifiable, Codable {
+    //Default Initializer
+    internal init(name: String, dosage: Double? = nil, dosageUnit: Medication.DosageUnit? = nil, schedule: Medication.Schedule, maxDosage: Int? = nil, reminders: Bool, pastDoses: [Medication.Dosage]) {
+        self.id = UUID()
+        self.name = name
+        self.dosage = dosage
+        self.dosageUnit = dosageUnit
+        self.schedule = schedule
+        self.maxDosage = maxDosage
+        self.reminders = reminders
+        self.pastDoses = pastDoses
+    }
+    
     //ID
-    let id = UUID()
-    enum Schedule : Hashable {
+    let id : UUID
+    enum Schedule : Hashable, Codable {
         case intervalSchedule(interval: TimeInterval)
         case specificTime(time: Date)
         case asNeeded
     }
     //define variables
     var name : String
-    enum DosageUnit : CaseIterable, Hashable {        
+    enum DosageUnit : CaseIterable, Hashable, Codable {
         static var allCases: [DosageUnit] {
             return [mg, mcg, g,kg,ml,L,cc,pills,tablets] //Excluding other unit
         }
@@ -61,8 +73,8 @@ struct Medication : Equatable,Identifiable {
     var maxDosage : Int?
     var reminders : Bool
     var pastDoses :[Dosage]
-    var dateComponentsFormatter : DateComponentsFormatter
-    var dateFormatter : DateFormatter
+    
+
     var readableDosage : String? {
         if let dosage = dosage, let dosageUnit = dosageUnit {
             return "\(dosage) \(dosageUnit.description)"
@@ -71,22 +83,22 @@ struct Medication : Equatable,Identifiable {
         }
     }
     
-    struct Dosage {
+    struct Dosage : Codable {
         var time : Date
         var amount : Int
-        var dateComponentsFormatter : DateComponentsFormatter
-        var dateFormatter : DateFormatter
+        static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentFormatter() //We're going to have to drop these to make it encodable, why r they here in the first place
+        static let  dateFormatter : DateFormatter = MedsDB.getDateFormatter()
         
         var timeSinceDosageString : String {
-            dateComponentsFormatter.string(from: time,to: .now) ?? ""
+            Medication.Dosage.dateComponentsFormatter.string(from: time,to: .now) ?? ""
         }
         var timeString : String {
-            dateFormatter.string(from: time)
+            Medication.Dosage.dateFormatter.string(from: time)
         }
     }
     
     mutating func logDosage(time : Date, amount : Int) {
-        pastDoses.append(Dosage(time: time, amount: amount, dateComponentsFormatter: dateComponentsFormatter, dateFormatter: dateFormatter))
+        pastDoses.append(Dosage(time: time, amount: amount))
         //In theory, this should go from back of the array and insert at a sorted place, but I'm not doing that right this second
         pastDoses.sort(by: {$0.time < $1.time})
     }
