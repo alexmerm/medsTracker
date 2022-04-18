@@ -28,7 +28,7 @@ struct MedsDB : Codable {
         return dateComponentsFormatter
     }
     
-    var medications : [Medication] = [] //Store Medications heres
+    var medications : [Medication] = [] //Store Medications here
     
     //Returns ID of New Medicaiton
     mutating func addMedication(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool)  -> UUID {
@@ -75,9 +75,56 @@ struct MedsDB : Codable {
         }
     }
     
-    // MARK: Define Medication and Dosage Structs
-   
-
+    // MARK: Serializing and Deserializing
+    ///Gets URL of directory
+    private static func fileURL() throws -> URL {
+        try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+            .appendingPathComponent("medsDB.data")
+    }
+    ///@Escaping means that the closure param will outlive the func its passed into
+    ///Loads the Data
+    static func load(completion: @escaping (Result<MedsDB,Error>) -> Void) {
+        DispatchQueue.global(qos: .background).async {
+            do {
+                let fileURL = try fileURL() //the URL of the medsDB DataStore file
+                guard let file = try? FileHandle(forReadingFrom: fileURL) else { //try to load from the file, if it doesn't exist (aka its the initial opening of the app)...return a success with a new Medicaition DB
+                    DispatchQueue.main.async {
+                        completion(.success(MedsDB()))
+                    }
+                    return
+                }
+                //but if there was an file, we need to decode it
+                let medsDB = try JSONDecoder().decode(MedsDB.self, from: file.availableData)
+                DispatchQueue.main.async {
+                    completion(.success(medsDB)) //and return it successfully if it succeeds
+                }
+            } catch {
+                //and id it fails, return the erorr
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    ///Saves the data
+    ///Completion returns either the num of saved meds or an error
+    static func save(medsDB: MedsDB, completion: @escaping (Result<Int,Error>)-> Void) {
+        DispatchQueue.global(qos: .background).async {
+            do {
+                let data = try JSONEncoder().encode(medsDB)
+                let outfile = try fileURL()
+                try data.write(to: outfile)
+                DispatchQueue.main.async {
+                    completion(.success(medsDB.medications.count))
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 
 }
 
