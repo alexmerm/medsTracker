@@ -14,9 +14,7 @@ struct MedsDB : Codable {
     static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()//Need to make this static
     //DB Initializers
     init() {
-        //dateFormatter = DateFormatter()
-        //dateComponentsFormatter = DateComponentsFormatter()
-        //Inits each of them corrrectly (should be static but how?, prob stored in plist or smth
+        //This modidies these static vars when medsDB is created, so it doesn't need to be done again
         MedsDB.dateFormatter.dateStyle = .none
         MedsDB.dateFormatter.timeStyle = .short
         MedsDB.dateComponentsFormatter.allowedUnits = [.hour, .minute]
@@ -24,15 +22,9 @@ struct MedsDB : Codable {
     }
     
     static func getDateFormatter() -> DateFormatter {
-        let dateFormatter : DateFormatter  = MedsDB.dateFormatter
-        dateFormatter.dateStyle = .none
-        dateFormatter.timeStyle = .short
         return dateFormatter
     }
     static func getDateComponentFormatter() -> DateComponentsFormatter {
-        let dateComponentsFormatter : DateComponentsFormatter  =  MedsDB.dateComponentsFormatter
-        dateComponentsFormatter.allowedUnits = [.hour, .minute]
-        dateComponentsFormatter.zeroFormattingBehavior = .pad
         return dateComponentsFormatter
     }
     
