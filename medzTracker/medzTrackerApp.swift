@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct medzTrackerApp: App {
-    let persistenceController = PersistenceController.shared
     
     //Initialize ViewModel
     let tracker  = MedicineTracker()
@@ -17,7 +16,6 @@ struct medzTrackerApp: App {
         WindowGroup {
             //Put viewmodel into view
             ContentView(viewModel: tracker)
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }

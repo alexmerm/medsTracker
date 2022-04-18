@@ -8,7 +8,6 @@
 //View Class
 
 import SwiftUI
-import CoreData
 
 
 
@@ -24,7 +23,7 @@ struct ContentView: View {
                             
                 List(viewModel.meds) { med in
                     NavigationLink {
-                        DetailsView(medicine: med)
+                        DetailsView(viewModel: viewModel,medicine: med)
                     } label: {
                         MedicationRow(medicine: med)
                     }
@@ -119,6 +118,6 @@ struct ContentView_Previews: PreviewProvider {
         
         
     
-        return ContentView(viewModel: tracker).environment(\.managedObjectContext, PersistenceController.preview.container.viewContext)
+        return ContentView(viewModel: tracker)
     }
 }

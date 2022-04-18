@@ -86,7 +86,7 @@ struct Medication : Equatable,Identifiable, Codable {
     struct Dosage : Codable {
         var time : Date
         var amount : Int
-        static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentFormatter() //We're going to have to drop these to make it encodable, why r they here in the first place
+        static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentFormatter() 
         static let  dateFormatter : DateFormatter = MedsDB.getDateFormatter()
         
         var timeSinceDosageString : String {

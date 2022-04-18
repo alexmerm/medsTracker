@@ -24,14 +24,13 @@ struct MedsDB : Codable {
     }
     
     static func getDateFormatter() -> DateFormatter {
-        let dateFormatter : DateFormatter  = DateFormatter()
+        let dateFormatter : DateFormatter  = MedsDB.dateFormatter
         dateFormatter.dateStyle = .none
         dateFormatter.timeStyle = .short
-
         return dateFormatter
     }
     static func getDateComponentFormatter() -> DateComponentsFormatter {
-        let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()
+        let dateComponentsFormatter : DateComponentsFormatter  =  MedsDB.dateComponentsFormatter
         dateComponentsFormatter.allowedUnits = [.hour, .minute]
         dateComponentsFormatter.zeroFormattingBehavior = .pad
         return dateComponentsFormatter

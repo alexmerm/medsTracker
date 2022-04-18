@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21E258" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Dosage" representedClassName="Dosage" syncable="YES" codeGenerationType="class">
+        <attribute name="amt" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="medicationID" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Medicine" inverseName="medicationID" inverseEntity="Medicine"/>
+        <fetchedProperty name="name" optional="YES">
+            <fetchRequest name="fetchedPropertyFetchRequest" entity="Dosage"/>
+        </fetchedProperty>
+    </entity>
+    <entity name="Medicine" representedClassName="Medicine" syncable="YES" codeGenerationType="class">
+        <attribute name="dosage" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="maxDosage" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="timestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="medicationID" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Dosage" inverseName="medicationID" inverseEntity="Dosage"/>
     </entity>
     <elements>
-        <element name="Item" positionX="-63" positionY="-18" width="128" height="44"/>
+        <element name="Medicine" positionX="-489.12890625" positionY="-3296.48828125" width="128" height="14"/>
+        <element name="Dosage" positionX="-275.3515625" positionY="-3083.59765625" width="128" height="20"/>
     </elements>
 </model>

@@ -12,8 +12,6 @@
 		CF214D4D27D2C1870015C9BB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D4C27D2C1870015C9BB /* ContentView.swift */; };
 		CF214D4F27D2C1880015C9BB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF214D4E27D2C1880015C9BB /* Assets.xcassets */; };
 		CF214D5227D2C1880015C9BB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF214D5127D2C1880015C9BB /* Preview Assets.xcassets */; };
-		CF214D5427D2C1880015C9BB /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D5327D2C1880015C9BB /* Persistence.swift */; };
-		CF214D5727D2C1880015C9BB /* medzTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CF214D5527D2C1880015C9BB /* medzTracker.xcdatamodeld */; };
 		CF214D6127D2C1880015C9BB /* medzTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D6027D2C1880015C9BB /* medzTrackerTests.swift */; };
 		CF214D6B27D2C1880015C9BB /* medzTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D6A27D2C1880015C9BB /* medzTrackerUITests.swift */; };
 		CF214D6D27D2C1880015C9BB /* medzTrackerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D6C27D2C1880015C9BB /* medzTrackerUITestsLaunchTests.swift */; };
@@ -49,8 +47,6 @@
 		CF214D4C27D2C1870015C9BB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		CF214D4E27D2C1880015C9BB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF214D5127D2C1880015C9BB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		CF214D5327D2C1880015C9BB /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
-		CF214D5627D2C1880015C9BB /* medzTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = medzTracker.xcdatamodel; sourceTree = "<group>"; };
 		CF214D5C27D2C1880015C9BB /* medzTrackerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = medzTrackerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF214D6027D2C1880015C9BB /* medzTrackerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = medzTrackerTests.swift; sourceTree = "<group>"; };
 		CF214D6627D2C1880015C9BB /* medzTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = medzTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,8 +114,6 @@
 				CF214D4A27D2C1870015C9BB /* medzTrackerApp.swift */,
 				CF214D7B27D2C8060015C9BB /* MedicineTracker.swift */,
 				CF214D4E27D2C1880015C9BB /* Assets.xcassets */,
-				CF214D5327D2C1880015C9BB /* Persistence.swift */,
-				CF214D5527D2C1880015C9BB /* medzTracker.xcdatamodeld */,
 				CF214D5027D2C1880015C9BB /* Preview Content */,
 			);
 			path = medzTracker;
@@ -301,10 +295,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF0EC72928027F6F008F1EC9 /* Medication.swift in Sources */,
-				CF214D5727D2C1880015C9BB /* medzTracker.xcdatamodeld in Sources */,
 				CFBDA2C927FE7B000043BB0E /* AddMedicineView.swift in Sources */,
 				CF214D7A27D2C78F0015C9BB /* MedsDB.swift in Sources */,
-				CF214D5427D2C1880015C9BB /* Persistence.swift in Sources */,
 				CF214D4D27D2C1870015C9BB /* ContentView.swift in Sources */,
 				CF214D8027D6A40C0015C9BB /* testClass.swift in Sources */,
 				CF8C714727FE4FB800186570 /* DetailsView.swift in Sources */,
@@ -637,19 +629,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		CF214D5527D2C1880015C9BB /* medzTracker.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				CF214D5627D2C1880015C9BB /* medzTracker.xcdatamodel */,
-			);
-			currentVersion = CF214D5627D2C1880015C9BB /* medzTracker.xcdatamodel */;
-			path = medzTracker.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = CF214D3F27D2C1870015C9BB /* Project object */;
 }
