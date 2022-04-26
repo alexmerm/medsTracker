@@ -37,6 +37,18 @@ struct MedsDB : Codable {
         return med.id
     }
     
+    mutating func removeMedication(_ uuid : UUID) -> Void {
+        let index = getIndexFromUUID(uuid)
+        guard let index = index else {
+            return
+        }
+        medications.remove(at: index)
+    }
+    
+    mutating func removeMedicationByIndexSet(_ indexset: IndexSet) {
+        medications.remove(atOffsets: indexset)
+    }
+    
     //Gets Medication by UUID
     func getMedicationByUUID(_ uuid : UUID)  -> Medication?{
         for medication in medications {

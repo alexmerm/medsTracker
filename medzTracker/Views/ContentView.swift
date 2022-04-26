@@ -16,43 +16,47 @@ struct ContentView: View {
     @ObservedObject var viewModel : MedicineTracker //ViewModel will be passed in
     @State var isOnAddingScreen = false
     
-
+    
     // MARK: Actual View
     var body: some View {
         
         NavigationView {
-                            
-                List(viewModel.meds) { med in
+            
+            List {
+                ForEach(viewModel.meds) {
+                    med in
                     NavigationLink {
                         DetailsView(viewModel: viewModel,medication: med)
                     } label: {
                         MedicationRow(medicine: med)
                     }
-                        
+                }.onDelete(perform:
+                            {indexSet in
+                          viewModel.removeMedicationsByIndexSet(indexSet: indexSet)})
+            }
+            .toolbar(content: {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    HStack {
+                        Image(systemName: "pills")
+                        Text("MedsTracker")
+                    }.font(.title)
                 }
-                    .toolbar(content: {
-                        ToolbarItem(placement: .navigationBarLeading) {
-                            HStack {
-                                Image(systemName: "pills")
-                                Text("MedsTracker")
-                            }.font(.title)
-                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            NavigationLink(destination: AddMedicineView(viewModel: viewModel, isOnAddingScreen: $isOnAddingScreen), isActive: $isOnAddingScreen) {
-                                Image(systemName: "plus.circle")
-                            }.font(.title2)
-  
-                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
-                                viewModel.insertDummyData()
-                            } label: {
-                                Image(systemName: "plus.square")
-                            }.font(.title2)
-                        }
-                    })
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: AddMedicineView(viewModel: viewModel, isOnAddingScreen: $isOnAddingScreen), isActive: $isOnAddingScreen) {
+                        Image(systemName: "plus.circle")
+                    }.font(.title2)
+                    
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        viewModel.insertDummyData()
+                    } label: {
+                        Image(systemName: "plus.square")
+                    }.font(.title2)
+                }
+            })
         }.navigationViewStyle(StackNavigationViewStyle()) //need this so it displays correct on iPad
-
+        
     }
     
 }
@@ -90,8 +94,8 @@ struct MedicationRow : View {
     var body : some View {
         VStack{
             HStack {
-                Text(medName).font(.title2
-                )
+                Text(medName)
+                    .font(.title3)
                 Spacer()
                 Label(timeDelta ?? "N/A", systemImage: "timer")
             }
@@ -105,7 +109,9 @@ struct MedicationRow : View {
                     if let timeOfLastDosage = timeOfLastDosage {
                         Text("(\(timeOfLastDosage))")
                     }
-                }.font(.footnote)
+                }.font(.subheadline)
+                    .foregroundColor(.secondary)
+                
             }
         }
     }
@@ -118,7 +124,7 @@ struct ContentView_Previews: PreviewProvider {
         tracker.insertDummyData()
         
         
-    
+        
         return ContentView(viewModel: tracker)
     }
 }

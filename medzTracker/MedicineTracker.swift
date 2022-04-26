@@ -31,6 +31,7 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
     }
 
     func saveData() {
+        debugPrint("saving Data")
         MedsDB.save(medsDB: model) { result in
             if case .failure(let error) = result {
                 fatalError(error.localizedDescription)
@@ -57,6 +58,13 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
     
     var meds: [Medication] {
         return model.medications
+    }
+    func removeMedication(_ uuid : UUID) -> Void {
+        model.removeMedication(uuid)
+    }
+    
+    func removeMedicationsByIndexSet(indexSet: IndexSet) {
+        model.removeMedicationByIndexSet(indexSet)
     }
     
     
