@@ -215,7 +215,10 @@ struct AddMedicineView: View {
             let interval = TimeInterval(interval_hour * 3600 + interval_minute * 60)
             schedule = Medication.Schedule.intervalSchedule(interval: interval)
         case .specificTime:
-            schedule = Medication.Schedule.specificTime(time: specificTime)
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: specificTime)
+            let minute = calendar.component(.minute, from: specificTime)
+            schedule = Medication.Schedule.specificTime(hour: hour, minute: minute)
         }
         //actually add to DB
         let _ = viewModel.addMedicationToModel(medName: medication_name, dosage: Double(dosage_string), dosageUnit: dosage_unit, schedule: schedule, maxDosage: nil, reminders: wantReminders)

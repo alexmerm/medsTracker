@@ -15,22 +15,27 @@ struct DetailsView: View {
         VStack(alignment: .leading) {
             //Dosage Amount
             if let readableDosage = medication.readableDosage {
-                Text("Dosage : \(readableDosage)").font(.caption)
+                Text("**Dosage** : \(readableDosage)").font(.subheadline)
                 
             }
-            if medication.schedule != Medication.Schedule.asNeeded {
-                VStack{
-                    let readableSchedule = medication.readableSchedule!
-                    Text("Schedule:").font(.title2)
-                    switch medication.schedule {
-                    case .asNeeded:
-                        Text("nada")
-                    case .intervalSchedule(interval: _),.specificTime(time:  _):
-                        Text(readableSchedule)
-                    }
+            Divider()
+            //Schedule
+            
+            Section{
+                Text("**Schedule** : \(medication.schedule.typeString())").font(.title2)
+                
+                switch medication.schedule {
+                case .specificTime(hour: let hour, minute: let minute):
+                    Text("SPecificTime")
+                case .intervalSchedule(interval: let interval):
+                    Text("Interval")
+                case .asNeeded:
+                    Text("asNeeeded")
                 }
             }
-
+            
+            
+            
             
             HStack {
                 
@@ -39,11 +44,13 @@ struct DetailsView: View {
             if let dosage = medication.getLatestDosage(){
                 Text(dosage.timeString)
             }
-                
+            
             Spacer()
         }.padding()
-        .navigationBarTitle(medication.name)
+            .navigationBarTitle(medication.name)
     }
+    
+    
 }
 
 struct DetailsView_Previews: PreviewProvider {
@@ -51,12 +58,12 @@ struct DetailsView_Previews: PreviewProvider {
         let tracker = MedicineTracker()
         tracker.insertDummyData()
         return Group{
-        ForEach(tracker.meds) { med in
-            NavigationView {
-                DetailsView(viewModel: tracker, medication: med)
+            ForEach(tracker.meds) { med in
+                NavigationView {
+                    DetailsView(viewModel: tracker, medication: med)
+                }
+                
             }
-            
-        }
         }
     }
 }
