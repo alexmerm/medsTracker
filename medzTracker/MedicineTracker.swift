@@ -19,7 +19,11 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
         MedsDB.load(completion: { result in
             switch result {
             case .failure(let error):
-                fatalError(error.localizedDescription)
+                //for now, lets just throw an error and replace the data
+                debugPrint(error.localizedDescription)
+                //fatalError(error.localizedDescription)
+                self.model = MedsDB()
+                self.saveData()
             case .success(let medsDB):
                 self.model = medsDB
             }

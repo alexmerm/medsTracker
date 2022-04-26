@@ -15,6 +15,7 @@ struct ContentView: View {
     
     @ObservedObject var viewModel : MedicineTracker //ViewModel will be passed in
     @State var isOnAddingScreen = false
+    
 
     // MARK: Actual View
     var body: some View {
@@ -23,7 +24,7 @@ struct ContentView: View {
                             
                 List(viewModel.meds) { med in
                     NavigationLink {
-                        DetailsView(viewModel: viewModel,medicine: med)
+                        DetailsView(viewModel: viewModel,medication: med)
                     } label: {
                         MedicationRow(medicine: med)
                     }

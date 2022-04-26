@@ -50,7 +50,7 @@ struct AddMedicineView: View {
                 Section(header: Text("Medication Info")) {
                     HStack{
                         Text("Medication Name")
-                        TextField("Required", text: $medication_name)
+                        TextField("Required", text: $medication_name).disableAutocorrection(true)
                     }
                     HStack{
                         Text("Dosage")
@@ -248,6 +248,8 @@ struct customTextFieldView : View  {
                         { Text("save")}
                     }
                 })
+        }.onSubmit {
+            self.isAddingCustomUnit.toggle()
         }
     }
 }

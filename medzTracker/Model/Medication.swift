@@ -82,6 +82,17 @@ struct Medication : Equatable,Identifiable, Codable {
             return nil
         }
     }
+    //TODO: make intetval into like "every x hours, x min", and other into "every day at"
+    var readableSchedule : String? {
+        switch schedule {
+        case .intervalSchedule(let interval):
+            return MedsDB.getDateComponentFormatter().string(from: interval)
+        case .specificTime(let time):
+            return MedsDB.getDateFormatter().string(from: time)
+        case .asNeeded:
+            return nil
+        }
+    }
     
     struct Dosage : Codable {
         var time : Date
