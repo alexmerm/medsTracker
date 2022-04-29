@@ -6,6 +6,20 @@
 //
 
 import Foundation
+
+extension Date {
+    
+    static var relativeDateFormatter = MedsDB.relativeDateFormatter
+    static var timeOnlyFormatter = MedsDB.dateFormatter
+    var relativeFormattedString :String {
+        Date.relativeDateFormatter.string(from: self)
+    }
+    var timeOnlyFormattedString : String{
+        Date.timeOnlyFormatter.string(from: self)
+    }
+    
+}
+
 struct Medication : Equatable,Identifiable, Codable {
     //Default Initializer
     internal init(name: String, dosage: Double? = nil, dosageUnit: Medication.DosageUnit? = nil, schedule: Medication.Schedule, maxDosage: Int? = nil, reminders: Bool, pastDoses: [Medication.Dosage]) {
@@ -36,6 +50,38 @@ struct Medication : Equatable,Identifiable, Codable {
                 return "As Needed"
             }
         }
+        
+        func isScheduled() -> Bool {
+            switch self {
+            case .intervalSchedule(_), .specificTime(hour: _, minute:  _):
+                return true
+            case .asNeeded:
+                return false
+            }
+        }
+        
+        
+        
+        static var dateComponentsFormatterFull : DateComponentsFormatter = DateComponentsFormatter()
+        static func getDateComponentsFormatterFull() -> DateComponentsFormatter {
+            dateComponentsFormatterFull.unitsStyle = .full
+            return dateComponentsFormatterFull
+        }
+        
+        
+        var readableSchedule : String? {
+            switch self {
+            case .intervalSchedule(let interval):
+                return "Every \(Medication.Schedule.getDateComponentsFormatterFull().string(from: interval)!)"
+            case .specificTime(hour: let hour, minute: let minute):
+                let date = Date()
+                let d2 = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: date)!
+                return d2.timeOnlyFormattedString
+            case .asNeeded:
+                return nil
+            }
+        }
+        
     }
     //define variables
     var name : String
@@ -98,31 +144,20 @@ struct Medication : Equatable,Identifiable, Codable {
             return nil
         }
     }
-    //TODO: make intetval into like "every x hours, x min", and other into "every day at"
-    var readableSchedule : String? {
-        switch schedule {
-        case .intervalSchedule(let interval):
-            return MedsDB.getDateComponentFormatter().string(from: interval)
-        case .specificTime(hour: let hour, minute: let minute):
-            let date = Date()
-            let d2 = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: date)
-            return d2?.formatted()
-        case .asNeeded:
-            return nil
-        }
-    }
-    
-    struct Dosage : Codable {
+
+    struct Dosage : Codable, Hashable {
         var time : Date
         var amount : Int
-        static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentFormatter()
-        static let  dateFormatter : DateFormatter = MedsDB.getDateFormatter()
-        
+        static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentsFormatter()
         var timeSinceDosageString : String {
             Medication.Dosage.dateComponentsFormatter.string(from: time,to: .now) ?? ""
         }
+        ///Returns just time of dosage, no date, even if it wasn't today
         var timeString : String {
-            Medication.Dosage.dateFormatter.string(from: time)
+            time.timeOnlyFormattedString
+        }
+        var relativeTimeString: String {
+            time.relativeFormattedString
         }
     }
     
@@ -138,28 +173,14 @@ struct Medication : Equatable,Identifiable, Codable {
     }
     
     var overdue : Bool {
-
-        ///1. Check if added today
-        ///     a. for interval:
-        ///             b. if there is a latestDosage, return true if it  latestDosage + Interval < currTime
-        ///             c. otherwise, return false
-        ///     b. for Scheduletime:
-        ///             a. if added today:
-        ///                     a. if scheduleTime today is < (>) addedTime, then return false
-        ///                     b. otherwise, if currTime > scheduleTime today, then return true , otherwise false (so actually pass thru to default)
-        ///             b. if not added today:
-        ///                     c. if currTime > schedultTime today, return true , otherwise return false
-        ///      c. for asNeeded : return false
-        ///
-    
         let nextDosageTime = getNextDosageTime()
-        if nextDosageTime != nil {
-            return true
-        } else {
+        guard let nextDosageTime = nextDosageTime else {
             return false
         }
+        return Date.now < nextDosageTime
 
     }
+
     
     
     func getNextDosageTime() -> Date? {

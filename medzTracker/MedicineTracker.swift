@@ -69,12 +69,21 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
     
     
     func insertDummyData() {
-        let _ = self.addMedicationToModel(medName: "Adderall IR", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
+        let id1 = self.addMedicationToModel(medName: "Adderall IR", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
+        self.logDosage(uuid: id1, time: Date() - 400, amount: 10)
+        self.logDosage(uuid: id1, time: Date() - 400 - (60 * 60 * 4), amount: 10)
 
         let id2 = self.addMedicationToModel(medName: "Claratin", dosage: nil, dosageUnit: nil, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
         self.logDosage(uuid: id2, time: Date() - 400, amount: 10)
         let id3 = self.addMedicationToModel(medName: "Sudafed", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
         self.logDosage(uuid: id3, time: Date() - 200, amount: 10)
+        
+        let id4 = self.addMedicationToModel(medName: "Cymbalta", dosage: 60, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.specificTime(hour: 9, minute: 30), maxDosage: 60, reminders: true)
+        self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date())!, amount: 60)
+        self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date() - TimeInterval(60 * 60 * 24))!, amount: 60)
+        
+        let _ = self.addMedicationToModel(medName: "Xanax", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.asNeeded, maxDosage: nil, reminders: true)
+
     }
     
 

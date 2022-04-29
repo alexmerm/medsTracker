@@ -21,29 +21,40 @@ struct DetailsView: View {
             Divider()
             //Schedule
             
-            Section{
-                Text("**Schedule** : \(medication.schedule.typeString())").font(.title2)
-                
-                switch medication.schedule {
-                case .specificTime(hour: let hour, minute: let minute):
-                    Text("SPecificTime")
-                case .intervalSchedule(interval: let interval):
-                    Text("Interval")
-                case .asNeeded:
-                    Text("asNeeeded")
+            
+            
+            if medication.schedule.isScheduled() {
+                Section {
+                    Text("**Schedule** : \(medication.schedule.typeString())").font(.title2)
+                    Text(medication.schedule.readableSchedule!)
+                    
                 }
-            }
-            
-            
-            
-            
-            HStack {
+                Divider()
                 
-                Spacer()
+                Section {
+                    Text("Next Dosage").font(.title2)
+                    Text(medication.getNextDosageTime()!.relativeFormattedString).padding(.leading)
+                }
+                Divider()
+                
+                
             }
-            if let dosage = medication.getLatestDosage(){
-                Text(dosage.timeString)
+            
+            
+            Section {
+                Text("Previous Doses").font(.title2)
+                if medication.pastDoses.isEmpty {
+                    Text("You haven't taken this yet").padding(.leading)
+                }
+                //"Else"
+                List {
+                    ForEach(medication.pastDoses.reversed().prefix(10), id: \.self) { dosage in
+                        Text("\(dosage.relativeTimeString)")
+                    }
+                }.listStyle(.inset).listRowSeparator(.hidden)
             }
+
+            Divider()
             
             Spacer()
         }.padding()

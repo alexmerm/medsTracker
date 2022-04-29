@@ -78,6 +78,7 @@ struct MedicationRow : View {
         medDosage = inputMed.readableDosage
         timeDelta = inputMed.getLatestDosage()?.timeSinceDosageString
         timeOfLastDosage = inputMed.getLatestDosage()?.timeString
+        //TODO: Only show this if its today
     }
     //Default Init
     init(medName: String, medDosage: String?, timeSinceDosage: String?, timeOfLastDosage : String?) {
