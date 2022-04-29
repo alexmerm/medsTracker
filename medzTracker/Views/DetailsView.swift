@@ -21,20 +21,18 @@ struct DetailsView: View {
             Divider()
             //Schedule
             
-            
-            
             if medication.schedule.isScheduled() {
-                Section {
-                    Text("**Schedule** : \(medication.schedule.typeString())").font(.title2)
-                    Text(medication.schedule.readableSchedule!)
-                    
-                }
-                Divider()
-                
                 Section {
                     Text("Next Dosage").font(.title2)
                     Text(medication.getNextDosageTime()!.relativeFormattedString).padding(.leading)
                 }
+                Divider()
+                Section {
+                    Text("Schedule").font(.title2)
+                    Text(medication.schedule.readableSchedule!).padding(.leading)
+                }
+                
+
                 Divider()
                 
                 

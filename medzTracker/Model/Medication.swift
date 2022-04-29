@@ -76,7 +76,7 @@ struct Medication : Equatable,Identifiable, Codable {
             case .specificTime(hour: let hour, minute: let minute):
                 let date = Date()
                 let d2 = Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: date)!
-                return d2.timeOnlyFormattedString
+                return "Everyday at \(d2.timeOnlyFormattedString)"
             case .asNeeded:
                 return nil
             }
