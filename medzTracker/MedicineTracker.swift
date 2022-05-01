@@ -8,12 +8,16 @@
 //THIS IS THE VIEWMODEL
 import Foundation
 
+
+
 class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entire MedsDB Class, even tho we don't have to 
 
     
     //private(set) means other things can see the model but can't change it
     //Creates the model
     @Published private(set) var model : MedsDB = MedsDB() //this shouldn't init here but for now it does
+    var scheduler = Scheduler()
+    
     //non-static function to load data
     func loadData() {
         MedsDB.load(completion: { result in
@@ -28,6 +32,7 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
                 self.model = medsDB
             }
         })
+        scheduler.getNotificationPermissions()
     }
 
     func saveData() {
@@ -37,7 +42,22 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
                 fatalError(error.localizedDescription)
             }
         }
+        scheduleAllNotifications()
     }
+    
+    func scheduleAllNotifications() {
+        model.medications.forEach({ medication in
+            if medication.schedule.isScheduled() && medication.reminders && medication.getNextDosageTime() != nil {
+                let _ = scheduler.scheduleNotification(medication: medication)
+                //medication.scheduledNotificationIDs.append(id)
+                
+            }
+        })
+        print(scheduler.notificationIDs)
+    }
+    
+    
+    
     
     ///These Methods are for intents from the view to modify or access the model
 
@@ -52,7 +72,7 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
         model.getMedicationByUUID(uuid)
     }
     
-    func logDosage(uuid : UUID, time : Date, amount : Int) {
+    func logDosage(uuid : UUID, time : Date, amount : Double?) {
         model.logDosage(uuid, time: time, amount: amount)
     }
     

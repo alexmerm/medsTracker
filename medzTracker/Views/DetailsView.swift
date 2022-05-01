@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailsView: View {
     var viewModel : MedicineTracker
     var medication :Medication //could in theory just pass in an ID, but not bc this is simpler for testing purposes
+    @State var isOnLogView : Bool = false
     var body: some View {
         
         VStack(alignment: .leading) {
@@ -22,9 +23,14 @@ struct DetailsView: View {
             //Schedule
             
             if medication.schedule.isScheduled() {
-                Section {
-                    Text("Next Dosage").font(.title2)
-                    Text(medication.getNextDosageTime()!.relativeFormattedString).padding(.leading)
+                VStack {
+                    if let nextDosageTime = medication.getNextDosageTime() {
+                        Section {
+                        
+                        Text("Next Dosage").font(.title2)
+                        Text(nextDosageTime.relativeFormattedString).padding(.leading)
+                        }
+                    }
                 }
                 Divider()
                 Section {
@@ -57,6 +63,20 @@ struct DetailsView: View {
             Spacer()
         }.padding()
             .navigationBarTitle(medication.name)
+            .toolbar(content: {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination:
+                                    LogDosageView(viewModel: viewModel, medication: medication,
+                                                  timeTaken: Date(),
+                                                  isOnLogView: $isOnLogView),
+                                   isActive: $isOnLogView,
+                                   label: {
+                        Label("Log", systemImage: "circle")
+                    })
+                    
+
+                }
+            })
     }
     
     

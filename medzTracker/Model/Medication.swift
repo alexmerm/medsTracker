@@ -7,18 +7,7 @@
 
 import Foundation
 
-extension Date {
-    
-    static var relativeDateFormatter = MedsDB.relativeDateFormatter
-    static var timeOnlyFormatter = MedsDB.dateFormatter
-    var relativeFormattedString :String {
-        Date.relativeDateFormatter.string(from: self)
-    }
-    var timeOnlyFormattedString : String{
-        Date.timeOnlyFormatter.string(from: self)
-    }
-    
-}
+
 
 struct Medication : Equatable,Identifiable, Codable {
     //Default Initializer
@@ -31,7 +20,7 @@ struct Medication : Equatable,Identifiable, Codable {
         self.maxDosage = maxDosage
         self.reminders = reminders
         self.pastDoses = pastDoses
-        self.creationTime = Date()
+        self.modificationTime = Date()
     }
     
     //ID
@@ -131,11 +120,9 @@ struct Medication : Equatable,Identifiable, Codable {
     var reminders : Bool
     var pastDoses :[Dosage]
     
-    let creationTime : Date //Signifies what time the medication was added
+    let modificationTime : Date //Signifies what time the medication was added
     static let calendar = Calendar.autoupdatingCurrent
-    
-    
-    
+        
 
     var readableDosage : String? {
         if let dosage = dosage, let dosageUnit = dosageUnit {
@@ -147,7 +134,7 @@ struct Medication : Equatable,Identifiable, Codable {
 
     struct Dosage : Codable, Hashable {
         var time : Date
-        var amount : Int
+        var amount : Double?
         static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentsFormatter()
         var timeSinceDosageString : String {
             Medication.Dosage.dateComponentsFormatter.string(from: time,to: .now) ?? ""
@@ -161,7 +148,7 @@ struct Medication : Equatable,Identifiable, Codable {
         }
     }
     
-    mutating func logDosage(time : Date, amount : Int) {
+    mutating func logDosage(time : Date, amount : Double?) {
         pastDoses.append(Dosage(time: time, amount: amount))
         //In theory, this should go from back of the array and insert at a sorted place, but I'm not doing that right this second
         pastDoses.sort(by: {$0.time < $1.time})
@@ -196,9 +183,9 @@ struct Medication : Equatable,Identifiable, Codable {
                 return nil //There is no way this will return negative, but we need to avoid the optional neatly-ish
             }
             //if medication was created today
-            if Medication.calendar.isDateInToday(creationTime) {
+            if Medication.calendar.isDateInToday(modificationTime) {
                 //if was created after the time it was scheduled
-                if scheduledTimeToday < creationTime {
+                if scheduledTimeToday < modificationTime {
                     //return tommorow's time
                     return Medication.calendar.date(byAdding: .day, value: 1, to: scheduledTimeToday)
                 }

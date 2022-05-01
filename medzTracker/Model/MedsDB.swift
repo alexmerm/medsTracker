@@ -85,11 +85,12 @@ struct MedsDB : Codable {
     
     
     //Log a new dosage of medication with UUID uuid
-    mutating func logDosage(_ uuid : UUID, time : Date, amount : Int) {
+    mutating func logDosage(_ uuid : UUID, time : Date, amount : Double?) {
         if let id = getIndexFromUUID(uuid) {
             medications[id].logDosage(time: time, amount: amount)
         }
     }
+
     
     // MARK: Serializing and Deserializing
     ///Gets URL of directory
