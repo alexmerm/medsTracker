@@ -12,9 +12,9 @@ import UserNotifications
 struct Scheduler {
     
     ///medID : [NotificationId]
-    var notificationIDs : [UUID: [UUID]] = [:]
+    var notificationIDs : [UUID: [String]] = [:]
     
-    mutating func storeNotification(medicationID: UUID, notificationID: UUID) {
+    mutating func storeNotification(medicationID: UUID, notificationID: String) {
         //If not there, create the arr
         if notificationIDs[medicationID] == nil {
             notificationIDs[medicationID] = [notificationID]
@@ -33,6 +33,22 @@ struct Scheduler {
             }
         }
     }
+    
+    mutating func updateMedicationNotications(medication : Medication) -> UUID? {
+        guard medication.schedule.isScheduled() && medication.reminders else {
+            return nil
+        }
+        //Remove all notifations for med by ID
+        if let ids = notificationIDs[medication.id] {
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
+            //remove from store too
+            notificationIDs[medication.id] = []
+        }
+        
+        //Create new notidications
+        return scheduleNotification(medication: medication)
+    }
+    
     mutating func scheduleNotification(medication: Medication) -> UUID? {
         precondition(medication.schedule.isScheduled(), "Medication have scheduler of scheudlign type")
         precondition(medication.reminders, "Must have reminders enabled")
@@ -44,7 +60,7 @@ struct Scheduler {
         let request = UNNotificationRequest(identifier: uuid.uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
         //Append to notificationIDS
-        storeNotification(medicationID: medication.id, notificationID: uuid)
+        storeNotification(medicationID: medication.id, notificationID: uuid.uuidString)
         return uuid
     }
     

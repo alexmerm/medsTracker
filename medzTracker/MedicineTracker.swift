@@ -45,6 +45,8 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
         scheduleAllNotifications()
     }
     
+
+    
     func scheduleAllNotifications() {
         model.medications.forEach({ medication in
             if medication.schedule.isScheduled() && medication.reminders && medication.getNextDosageTime() != nil {
@@ -65,6 +67,7 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
     func addMedicationToModel(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool) -> UUID {
         let newMedID =  model.addMedication(medName: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders)
         self.saveData()
+        scheduler.updateMedicationNotications(medication: self.getMedicationByUUID(newMedID)!)
         return newMedID
     }
     
