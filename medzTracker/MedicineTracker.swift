@@ -27,7 +27,7 @@ class MedicineTracker : ObservableObject {
     //non-static function to load data
     func loadData() {
         debugPrint("Loading Data")
-        Model.load(completion: { result in
+        Model.load(completion: { [self] result in
             switch result {
             case .failure(let error):
                 //for now, lets just throw an error and replace the data
@@ -38,9 +38,10 @@ class MedicineTracker : ObservableObject {
             case .success(let medsDB):
                 self.model = medsDB
             }
+            
+            Scheduler.getNotificationPermissions()
+            self.scheduler.loadExistingNotificationsFromSystemAndScheduleAll(medications: self.meds)
         })
-        Scheduler.getNotificationPermissions()
-        scheduler.loadExistingNotificationsFromSystemAndScheduleAll(medications: meds)
     }
 
     func saveData() {
@@ -83,6 +84,7 @@ class MedicineTracker : ObservableObject {
     
     func logDosage(uuid : UUID, time : Date, amount : Double?) {
         model.logDosage(uuid, time: time, amount: amount)
+        let _ = updateMedNotificationsByUUID(medID: uuid)
         self.saveData()
     }
     

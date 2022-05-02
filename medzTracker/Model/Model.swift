@@ -10,9 +10,6 @@ import Foundation
 //THIS IS THE MODEL
 
 struct Model : Codable {
-    static let dateFormatter : DateFormatter  = DateFormatter()// and this
-    static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()//Need to make this static
-    static let relativeDateFormatter : DateFormatter = DateFormatter()
     //DB Initializers
     init() {
         self.setupDateFormatters()
@@ -23,23 +20,6 @@ struct Model : Codable {
         self.setupDateFormatters()
     }
     
-    func setupDateFormatters() {
-        //This modidies these static vars when medsDB is created, so it doesn't need to be done again
-        Model.dateFormatter.dateStyle = .none
-        Model.dateFormatter.timeStyle = .short
-        Model.dateComponentsFormatter.allowedUnits = [.hour, .minute]
-        Model.dateComponentsFormatter.zeroFormattingBehavior = .pad
-        Model.relativeDateFormatter.dateStyle = .short
-        Model.relativeDateFormatter.timeStyle = .short
-        Model.relativeDateFormatter.doesRelativeDateFormatting = true
-    }
-    
-    static func getDateFormatter() -> DateFormatter {
-        return dateFormatter
-    }
-    static func getDateComponentsFormatter() -> DateComponentsFormatter {
-        return dateComponentsFormatter
-    }
     
     var medications : [Medication] = [] //Store Medications here
     
@@ -152,6 +132,29 @@ struct Model : Codable {
                 }
             }
         }
+    }
+    
+    //MARK: DateFormatters
+    static let dateFormatter : DateFormatter  = DateFormatter()// and this
+    static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()//Need to make this static
+    static let relativeDateFormatter : DateFormatter = DateFormatter()
+    
+    func setupDateFormatters() {
+        //This modidies these static vars when medsDB is created, so it doesn't need to be done again
+        Model.dateFormatter.dateStyle = .none
+        Model.dateFormatter.timeStyle = .short
+        Model.dateComponentsFormatter.allowedUnits = [.hour, .minute]
+        Model.dateComponentsFormatter.zeroFormattingBehavior = .pad
+        Model.relativeDateFormatter.dateStyle = .short
+        Model.relativeDateFormatter.timeStyle = .short
+        Model.relativeDateFormatter.doesRelativeDateFormatting = true
+    }
+    
+    static func getDateFormatter() -> DateFormatter {
+        return dateFormatter
+    }
+    static func getDateComponentsFormatter() -> DateComponentsFormatter {
+        return dateComponentsFormatter
     }
 
 }

@@ -45,6 +45,13 @@ class Scheduler {
         guard medication.schedule.isScheduled() && medication.reminders else {
             return nil
         }
+        removeMedicationsNotifications(medication: medication)
+        //Create new notidications
+        return scheduleNotification(medication: medication)
+    }
+    
+    //Remove all existing Notifications for this medication
+    func removeMedicationsNotifications(medication : Medication) {
         //Remove all notifations for med by ID
         if let ids = self.notificationIDs[medication.id] {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
@@ -52,8 +59,6 @@ class Scheduler {
             //this is not async...
             self.notificationIDs[medication.id] = []
         }
-        //Create new notidications
-        return scheduleNotification(medication: medication)
     }
                                                                           
                                                                           
