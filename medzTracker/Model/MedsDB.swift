@@ -15,6 +15,15 @@ struct MedsDB : Codable {
     static let relativeDateFormatter : DateFormatter = DateFormatter()
     //DB Initializers
     init() {
+        self.setupDateFormatters()
+    }
+    
+    init(from: [Medication]) {
+        self.medications = from
+        self.setupDateFormatters()
+    }
+    
+    func setupDateFormatters() {
         //This modidies these static vars when medsDB is created, so it doesn't need to be done again
         MedsDB.dateFormatter.dateStyle = .none
         MedsDB.dateFormatter.timeStyle = .short
@@ -98,6 +107,7 @@ struct MedsDB : Codable {
         try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             .appendingPathComponent("medsDB.data")
     }
+    ///MARK: Changing this to  saving [medication] so i can pass scheduler in.... or do i even need to
     ///@Escaping means that the closure param will outlive the func its passed into
     ///Loads the Data
     static func load(completion: @escaping (Result<MedsDB,Error>) -> Void) {
@@ -111,7 +121,8 @@ struct MedsDB : Codable {
                     return
                 }
                 //but if there was an file, we need to decode it
-                let medsDB = try JSONDecoder().decode(MedsDB.self, from: file.availableData)
+                let medsArray = try JSONDecoder().decode([Medication].self, from: file.availableData)
+                let medsDB = MedsDB(from: medsArray)
                 DispatchQueue.main.async {
                     completion(.success(medsDB)) //and return it successfully if it succeeds
                 }
@@ -129,7 +140,7 @@ struct MedsDB : Codable {
     static func save(medsDB: MedsDB, completion: @escaping (Result<Int,Error>)-> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
-                let data = try JSONEncoder().encode(medsDB)
+                let data = try JSONEncoder().encode(medsDB.medications)
                 let outfile = try fileURL()
                 try data.write(to: outfile)
                 DispatchQueue.main.async {

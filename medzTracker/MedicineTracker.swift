@@ -26,6 +26,7 @@ class MedicineTracker : ObservableObject {
     private(set)var scheduler : Scheduler
     //non-static function to load data
     func loadData() {
+        debugPrint("Loading Data")
         MedsDB.load(completion: { result in
             switch result {
             case .failure(let error):
