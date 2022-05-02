@@ -51,7 +51,6 @@ class MedicineTracker : ObservableObject {
                 fatalError(error.localizedDescription)
             }
         }
-        scheduler.scheduleAllNotifications(medications: meds)
     }
     
 
@@ -92,10 +91,16 @@ class MedicineTracker : ObservableObject {
         return model.medications
     }
     func removeMedication(_ uuid : UUID) -> Void {
+        if let med = getMedicationByUUID(uuid) {
+            scheduler.removeMedicationsNotifications(medication: med)
+        }
         model.removeMedication(uuid)
     }
     
     func removeMedicationsByIndexSet(indexSet: IndexSet) {
+        for med in model.getMedicationsByIndexSet(indexSet) {
+            scheduler.removeMedicationsNotifications(medication: med)
+        }
         model.removeMedicationByIndexSet(indexSet)
     }
     

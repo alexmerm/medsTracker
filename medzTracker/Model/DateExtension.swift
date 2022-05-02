@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 extension Date {
     
     static var relativeDateFormatter = Model.relativeDateFormatter

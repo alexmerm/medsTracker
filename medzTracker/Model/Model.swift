@@ -42,6 +42,15 @@ struct Model : Codable {
         medications.remove(atOffsets: indexset)
     }
     
+    ///get Medications from IndexSet
+    func getMedicationsByIndexSet(_ indexset: IndexSet) -> [Medication] {
+        var result : [Medication] = []
+        indexset.forEach {index in
+            result.append(medications[index])
+        }
+        return result
+    }
+    
     //Gets Medication by UUID
     func getMedicationByUUID(_ uuid : UUID)  -> Medication?{
         for medication in medications {
