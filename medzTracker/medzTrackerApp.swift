@@ -16,10 +16,6 @@ struct medzTrackerApp: App {
         WindowGroup {
             //Put viewmodel into view
             ContentView(viewModel: tracker)
-                .onAppear {
-                    tracker.loadData()
-
-                }
         }
     }
 }

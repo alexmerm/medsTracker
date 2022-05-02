@@ -10,14 +10,20 @@ import Foundation
 
 
 
-class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entire MedsDB Class, even tho we don't have to 
+class MedicineTracker : ObservableObject {
+    internal init() {
+        self.scheduler = Scheduler()
+        self.model = MedsDB()
+        self.loadData()
+    }
+    
+    // We Serialize+Deserialize the entire MedsDB Class, even tho we don't have to
 
     
     //private(set) means other things can see the model but can't change it
     //Creates the model
-    @Published private(set) var model : MedsDB = MedsDB() //this shouldn't init here but for now it does
-    var scheduler = Scheduler()
-    
+    @Published private(set) var model : MedsDB  //this shouldn't init here but for now it does
+    private(set)var scheduler : Scheduler
     //non-static function to load data
     func loadData() {
         MedsDB.load(completion: { result in
@@ -32,7 +38,8 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
                 self.model = medsDB
             }
         })
-        scheduler.getNotificationPermissions()
+        Scheduler.getNotificationPermissions()
+        scheduler.loadExistingNotificationsFromSystemAndScheduleAll(medications: meds)
     }
 
     func saveData() {
@@ -42,20 +49,18 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
                 fatalError(error.localizedDescription)
             }
         }
-        scheduleAllNotifications()
+        scheduler.scheduleAllNotifications(medications: meds)
     }
     
 
     
-    func scheduleAllNotifications() {
-        model.medications.forEach({ medication in
-            if medication.schedule.isScheduled() && medication.reminders && medication.getNextDosageTime() != nil {
-                let _ = scheduler.scheduleNotification(medication: medication)
-                //medication.scheduledNotificationIDs.append(id)
-                
-            }
-        })
-        print(scheduler.notificationIDs)
+
+    
+    func updateMedNotificationsByUUID(medID: UUID) -> UUID? {
+        if let med = getMedicationByUUID(medID) {
+            return scheduler.updateMedicationNotications(medication: med)
+        }
+        return nil
     }
     
     
@@ -67,7 +72,7 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
     func addMedicationToModel(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool) -> UUID {
         let newMedID =  model.addMedication(medName: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders)
         self.saveData()
-        scheduler.updateMedicationNotications(medication: self.getMedicationByUUID(newMedID)!)
+        let _ = updateMedNotificationsByUUID(medID: newMedID)
         return newMedID
     }
     
@@ -77,6 +82,7 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
     
     func logDosage(uuid : UUID, time : Date, amount : Double?) {
         model.logDosage(uuid, time: time, amount: amount)
+        self.saveData()
     }
     
     var meds: [Medication] {
@@ -106,6 +112,12 @@ class MedicineTracker : ObservableObject { // We Serialize+Deserialize the entir
         self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date() - TimeInterval(60 * 60 * 24))!, amount: 60)
         
         let _ = self.addMedicationToModel(medName: "Xanax", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.asNeeded, maxDosage: nil, reminders: true)
+        
+        let id5 = self.addMedicationToModel(medName: "EveryMin", dosage: 10, dosageUnit: .mg, schedule: .intervalSchedule(interval: 60), maxDosage: nil, reminders: true)
+        self.logDosage(uuid: id5, time: Date() - 60, amount: 10)
+        
+        _ = self.addMedicationToModel(medName: "NextMin", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now + 60), minute: Calendar.current.component(.minute, from: .now + 60)), maxDosage: nil, reminders: true)
+        
 
     }
     
