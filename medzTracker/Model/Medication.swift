@@ -135,7 +135,7 @@ struct Medication : Equatable,Identifiable, Codable {
     struct Dosage : Codable, Hashable {
         var time : Date
         var amount : Double?
-        static let dateComponentsFormatter : DateComponentsFormatter = MedsDB.getDateComponentsFormatter()
+        static let dateComponentsFormatter : DateComponentsFormatter = Model.getDateComponentsFormatter()
         var timeSinceDosageString : String {
             Medication.Dosage.dateComponentsFormatter.string(from: time,to: .now) ?? ""
         }

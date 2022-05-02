@@ -15,7 +15,7 @@
 		CF214D6127D2C1880015C9BB /* medzTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D6027D2C1880015C9BB /* medzTrackerTests.swift */; };
 		CF214D6B27D2C1880015C9BB /* medzTrackerUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D6A27D2C1880015C9BB /* medzTrackerUITests.swift */; };
 		CF214D6D27D2C1880015C9BB /* medzTrackerUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D6C27D2C1880015C9BB /* medzTrackerUITestsLaunchTests.swift */; };
-		CF214D7A27D2C78F0015C9BB /* MedsDB.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7927D2C78F0015C9BB /* MedsDB.swift */; };
+		CF214D7A27D2C78F0015C9BB /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7927D2C78F0015C9BB /* Model.swift */; };
 		CF214D7C27D2C8060015C9BB /* MedicineTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7B27D2C8060015C9BB /* MedicineTracker.swift */; };
 		CF214D7E27D2CF400015C9BB /* MedsDBTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7D27D2CF400015C9BB /* MedsDBTest.swift */; };
 		CF214D8027D6A40C0015C9BB /* testClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF214D7F27D6A40C0015C9BB /* testClass.swift */; };
@@ -55,7 +55,7 @@
 		CF214D6627D2C1880015C9BB /* medzTrackerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = medzTrackerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF214D6A27D2C1880015C9BB /* medzTrackerUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = medzTrackerUITests.swift; sourceTree = "<group>"; };
 		CF214D6C27D2C1880015C9BB /* medzTrackerUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = medzTrackerUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		CF214D7927D2C78F0015C9BB /* MedsDB.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedsDB.swift; sourceTree = "<group>"; };
+		CF214D7927D2C78F0015C9BB /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		CF214D7B27D2C8060015C9BB /* MedicineTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicineTracker.swift; sourceTree = "<group>"; };
 		CF214D7D27D2CF400015C9BB /* MedsDBTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedsDBTest.swift; sourceTree = "<group>"; };
 		CF214D7F27D6A40C0015C9BB /* testClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = testClass.swift; path = medzTracker/testClass.swift; sourceTree = "<group>"; };
@@ -166,7 +166,7 @@
 		CFBDA2C727FE56F70043BB0E /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CF214D7927D2C78F0015C9BB /* MedsDB.swift */,
+				CF214D7927D2C78F0015C9BB /* Model.swift */,
 				CF0EC72828027F6F008F1EC9 /* Medication.swift */,
 				CF96760D281E1FDB004AE977 /* DateExtension.swift */,
 			);
@@ -305,7 +305,7 @@
 			files = (
 				CF0EC72928027F6F008F1EC9 /* Medication.swift in Sources */,
 				CFBDA2C927FE7B000043BB0E /* AddMedicineView.swift in Sources */,
-				CF214D7A27D2C78F0015C9BB /* MedsDB.swift in Sources */,
+				CF214D7A27D2C78F0015C9BB /* Model.swift in Sources */,
 				CF96760C281DE13F004AE977 /* Scheduler.swift in Sources */,
 				CFC74F69281C81B500E26C22 /* LogDosageView.swift in Sources */,
 				CF214D4D27D2C1870015C9BB /* ContentView.swift in Sources */,

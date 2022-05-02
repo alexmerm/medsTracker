@@ -8,8 +8,8 @@
 import Foundation
 extension Date {
     
-    static var relativeDateFormatter = MedsDB.relativeDateFormatter
-    static var timeOnlyFormatter = MedsDB.dateFormatter
+    static var relativeDateFormatter = Model.relativeDateFormatter
+    static var timeOnlyFormatter = Model.dateFormatter
     var relativeFormattedString :String {
         Date.relativeDateFormatter.string(from: self)
     }

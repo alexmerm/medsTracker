@@ -9,7 +9,7 @@ import Foundation
 
 //THIS IS THE MODEL
 
-struct MedsDB : Codable {
+struct Model : Codable {
     static let dateFormatter : DateFormatter  = DateFormatter()// and this
     static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()//Need to make this static
     static let relativeDateFormatter : DateFormatter = DateFormatter()
@@ -25,13 +25,13 @@ struct MedsDB : Codable {
     
     func setupDateFormatters() {
         //This modidies these static vars when medsDB is created, so it doesn't need to be done again
-        MedsDB.dateFormatter.dateStyle = .none
-        MedsDB.dateFormatter.timeStyle = .short
-        MedsDB.dateComponentsFormatter.allowedUnits = [.hour, .minute]
-        MedsDB.dateComponentsFormatter.zeroFormattingBehavior = .pad
-        MedsDB.relativeDateFormatter.dateStyle = .short
-        MedsDB.relativeDateFormatter.timeStyle = .short
-        MedsDB.relativeDateFormatter.doesRelativeDateFormatting = true
+        Model.dateFormatter.dateStyle = .none
+        Model.dateFormatter.timeStyle = .short
+        Model.dateComponentsFormatter.allowedUnits = [.hour, .minute]
+        Model.dateComponentsFormatter.zeroFormattingBehavior = .pad
+        Model.relativeDateFormatter.dateStyle = .short
+        Model.relativeDateFormatter.timeStyle = .short
+        Model.relativeDateFormatter.doesRelativeDateFormatting = true
     }
     
     static func getDateFormatter() -> DateFormatter {
@@ -110,19 +110,19 @@ struct MedsDB : Codable {
     ///MARK: Changing this to  saving [medication] so i can pass scheduler in.... or do i even need to
     ///@Escaping means that the closure param will outlive the func its passed into
     ///Loads the Data
-    static func load(completion: @escaping (Result<MedsDB,Error>) -> Void) {
+    static func load(completion: @escaping (Result<Model,Error>) -> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
                 let fileURL = try fileURL() //the URL of the medsDB DataStore file
                 guard let file = try? FileHandle(forReadingFrom: fileURL) else { //try to load from the file, if it doesn't exist (aka its the initial opening of the app)...return a success with a new Medicaition DB
                     DispatchQueue.main.async {
-                        completion(.success(MedsDB()))
+                        completion(.success(Model()))
                     }
                     return
                 }
                 //but if there was an file, we need to decode it
                 let medsArray = try JSONDecoder().decode([Medication].self, from: file.availableData)
-                let medsDB = MedsDB(from: medsArray)
+                let medsDB = Model(from: medsArray)
                 DispatchQueue.main.async {
                     completion(.success(medsDB)) //and return it successfully if it succeeds
                 }
@@ -137,7 +137,7 @@ struct MedsDB : Codable {
     
     ///Saves the data
     ///Completion returns either the num of saved meds or an error
-    static func save(medsDB: MedsDB, completion: @escaping (Result<Int,Error>)-> Void) {
+    static func save(medsDB: Model, completion: @escaping (Result<Int,Error>)-> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
                 let data = try JSONEncoder().encode(medsDB.medications)

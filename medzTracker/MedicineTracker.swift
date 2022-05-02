@@ -13,7 +13,7 @@ import Foundation
 class MedicineTracker : ObservableObject {
     internal init() {
         self.scheduler = Scheduler()
-        self.model = MedsDB()
+        self.model = Model()
         self.loadData()
     }
     
@@ -22,18 +22,18 @@ class MedicineTracker : ObservableObject {
     
     //private(set) means other things can see the model but can't change it
     //Creates the model
-    @Published private(set) var model : MedsDB  //this shouldn't init here but for now it does
+    @Published private(set) var model : Model  //this shouldn't init here but for now it does
     private(set)var scheduler : Scheduler
     //non-static function to load data
     func loadData() {
         debugPrint("Loading Data")
-        MedsDB.load(completion: { result in
+        Model.load(completion: { result in
             switch result {
             case .failure(let error):
                 //for now, lets just throw an error and replace the data
                 debugPrint(error.localizedDescription)
                 //fatalError(error.localizedDescription)
-                self.model = MedsDB()
+                self.model = Model()
                 self.saveData()
             case .success(let medsDB):
                 self.model = medsDB
@@ -45,7 +45,7 @@ class MedicineTracker : ObservableObject {
 
     func saveData() {
         debugPrint("saving Data")
-        MedsDB.save(medsDB: model) { result in
+        Model.save(medsDB: model) { result in
             if case .failure(let error) = result {
                 fatalError(error.localizedDescription)
             }

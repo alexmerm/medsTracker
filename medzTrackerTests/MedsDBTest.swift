@@ -10,7 +10,7 @@ import XCTest
 import CloudKit
 
 class MedsDBTest: XCTestCase {
-    var db : MedsDB = MedsDB()
+    var db : Model = Model()
     var medID : UUID = UUID() //to be overwritten
 //    func testAddMed() throws {
 //        var db = MedsDB()
@@ -31,7 +31,7 @@ class MedsDBTest: XCTestCase {
     
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
-        db = MedsDB()
+        db = Model()
         medID = db.addMedication(medName: "Adderall IR", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
 //        med.logDosage(time: Date.now, amount: 10)
 
