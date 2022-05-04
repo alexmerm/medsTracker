@@ -14,6 +14,7 @@ class Scheduler {
     
     ///medID : [NotificationId]
     var notificationIDs : [UUID: [String]] = [:]
+
     
     ///Load notifications from backend, stores them in notificationIDs, and then scheudle all meds
     func loadExistingNotificationsFromSystemAndScheduleAll(medications : [Medication]) {
@@ -74,16 +75,10 @@ class Scheduler {
     }
     
     ///Get permissions to use notifications
-    static func getNotificationPermissions() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.sound,.badge,.alert,.criticalAlert]) { success,error in
-            if success {
-                print("We got Permissions")
-            } else if let error = error {
-                print(error.localizedDescription)
-                //TODO: Handle errors
-            }
-        }
+    func getNotificationPermissions() {
+        NotificationHandler.shared.requestPermission()
     }
+
     
     ///Loads all pending notifications from system and returns them in useful format
     private static func getNotificationsFromSystem(completion: @escaping (Result<[UUID: [String]],Error>) -> Void) {

@@ -39,7 +39,7 @@ class MedicineTracker : ObservableObject {
                 self.model = medsDB
             }
             
-            Scheduler.getNotificationPermissions()
+            self.scheduler.getNotificationPermissions()
             self.scheduler.loadExistingNotificationsFromSystemAndScheduleAll(medications: self.meds)
         })
     }
