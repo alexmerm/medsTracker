@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DetailsView: View {
     var viewModel : MedicineTracker
-    var medication :Medication //could in theory just pass in an ID, but not bc this is simpler for testing purposes
+    @StateObject var medication :Medication //could in theory just pass in an ID, but not bc this is simpler for testing purposes
     @State var isOnLogView : Bool = false
     var body: some View {
         
@@ -56,6 +56,8 @@ struct DetailsView: View {
                         Text("\(dosage.relativeTimeString)")
                     }
                 }.listStyle(.inset).listRowSeparator(.hidden)
+            }.onAppear {
+                print("numDoses: \(medication.pastDoses.count)")
             }
 
             Divider()

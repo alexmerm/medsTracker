@@ -9,7 +9,7 @@ import Foundation
 
 
 
-struct Medication : Equatable,Identifiable, Codable {
+class Medication : Equatable,Identifiable, Codable, ObservableObject {
     //Default Initializer
     internal init(name: String, dosage: Double? = nil, dosageUnit: Medication.DosageUnit? = nil, schedule: Medication.Schedule, maxDosage: Int? = nil, reminders: Bool, pastDoses: [Medication.Dosage]) {
         self.id = UUID()
@@ -73,7 +73,7 @@ struct Medication : Equatable,Identifiable, Codable {
         
     }
     //define variables
-    var name : String
+    @Published var name : String
     enum DosageUnit : CaseIterable, Hashable, Codable {
         static var allCases: [DosageUnit] {
             return [mg, mcg, g,kg,ml,L,cc,pills,tablets] //Excluding other unit
@@ -113,12 +113,12 @@ struct Medication : Equatable,Identifiable, Codable {
             }
         }
     }
-    var dosage : Double?
+    @Published var dosage : Double?
     var dosageUnit : DosageUnit?
     var schedule : Schedule
     var maxDosage : Int?
     var reminders : Bool
-    var pastDoses :[Dosage]
+    @Published var pastDoses :[Dosage]
     
     let modificationTime : Date //Signifies what time the medication was added
     static let calendar = Calendar.autoupdatingCurrent
@@ -148,7 +148,7 @@ struct Medication : Equatable,Identifiable, Codable {
         }
     }
     
-    mutating func logDosage(time : Date, amount : Double?) {
+    func logDosage(time : Date, amount : Double?) {
         pastDoses.append(Dosage(time: time, amount: amount))
         //In theory, this should go from back of the array and insert at a sorted place, but I'm not doing that right this second
         pastDoses.sort(by: {$0.time < $1.time})
@@ -206,4 +206,25 @@ struct Medication : Equatable,Identifiable, Codable {
         lhs.id == rhs.id
     }
     
+}
+
+///https://www.reddit.com/r/swift/comments/iiwwk5/adding_codable_to_published_swift_53/
+extension Published: Codable where Value : Codable {
+  
+  public func encode(to encoder: Encoder) {
+    var copy = self
+    _ = copy.projectedValue
+        .sink(receiveValue: { (value) in
+          do {
+            try value.encode(to: encoder)
+          } catch {
+            // handle encoding error
+          }
+        })
+  }
+  
+  public init(from decoder: Decoder) throws {
+    self.init(wrappedValue: try Value.init(from: decoder))
+  }
+  
 }
