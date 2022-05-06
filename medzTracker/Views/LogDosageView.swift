@@ -24,13 +24,14 @@ struct LogDosageView: View {
     var body: some View {
         
         VStack {
-            Text("Did you just take the \(medication.name)?")
+            Text("Did you take the \(medication.name)?")
             
             HStack {
                 ResponseButton(action: {
                     print("no")
                     logType = .remindMe
-                }, text: "No, Remind Me", color: .red)
+                    isOnLogView = false
+                }, text: "No, Snooze", color: .red)
                 ResponseButton(action: {
                     logType = .log
                     print("yes")
@@ -47,11 +48,22 @@ struct LogDosageView: View {
                     viewModel.logDosage(uuid: medication.id, time: timeTaken, amount: medication.dosage)
                     isOnLogView = false
                 } label: {
-                    Text("Submit")
+                    Text("Log It!")
                 }
             }
-
-        }
+            
+        }.navigationBarBackButtonHidden(fromNotification)
+            .toolbar(content: {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    print("Cancelling logging \(medication.name)")
+                    isOnLogView = false
+                }, label: {
+                    if fromNotification { Text("Cancel") }
+                    else { EmptyView()}
+                })
+            }
+        })
     }
     
 }
@@ -77,7 +89,7 @@ struct ResponseButton : View {
                     Text(text).foregroundColor(.black)
                         .font(.title2)
                         .multilineTextAlignment(.center))
-
+            
         }).padding()
     }
     
@@ -89,6 +101,8 @@ struct LogDosageView_Previews: PreviewProvider {
     static var previews: some View {
         let tracker = MedicineTracker()
         tracker.insertDummyData()
-        return LogDosageView(viewModel: tracker, medication: tracker.meds[0], timeTaken: Date(), isOnLogView: Binding.constant(true))
+        return NavigationView {
+            LogDosageView(viewModel: tracker, medication: tracker.meds[0], timeTaken: Date(), isOnLogView: Binding.constant(true))
+        }
     }
 }

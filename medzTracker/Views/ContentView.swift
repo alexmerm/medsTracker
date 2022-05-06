@@ -63,7 +63,7 @@ struct ContentView: View {
                 //MARK: Invisible Link to handle Notifications
                 if fromPushNotificationLocal {
                     NavigationLink(isActive: $fromPushNotificationLocal, destination: {
-                        LogDosageView(viewModel: viewModel, medication: viewModel.getMedicationByUUID(NotificationHandler.shared.medicationIDToLog!)!, timeTaken: Date(), isOnLogView: $fromPushNotificationLocal)
+                        LogDosageView(viewModel: viewModel, medication: viewModel.getMedicationByUUID(NotificationHandler.shared.medicationIDToLog!)!, timeTaken: Date(), fromNotification: true, isOnLogView: $fromPushNotificationLocal )
                         
                     }, label: {Text("You'll never see this")}
                                    
