@@ -41,7 +41,10 @@ struct ContentView: View {
                         HStack {
                             Image(systemName: "pills")
                             Text("MedsTracker")
-                        }.font(.title)
+                        }.font(.title).onTapGesture {
+                            //MARK: Secret Button
+                            print("tapped On Secret Button")
+                        }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         NavigationLink(destination: AddMedicineView(viewModel: viewModel, isOnAddingScreen: $isOnAddingScreen), isActive: $isOnAddingScreen) {

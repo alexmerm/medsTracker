@@ -33,7 +33,7 @@ class NotificationHandler : NSObject, UNUserNotificationCenterDelegate, Observab
                                 @escaping (UNNotificationPresentationOptions) -> Void) {
         print("Notification Should go out for : \(notification.request.content.title)")
         NotificationCenter.default.post(name: NSNotification.Name(notification.request.identifier), object: notification.request.content)
-        completionHandler([.sound,.banner])
+        completionHandler([.sound,.banner,.list])
     }
 
     
