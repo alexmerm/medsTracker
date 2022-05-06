@@ -124,10 +124,14 @@ class MedicineTracker : ObservableObject {
         let _ = self.addMedicationToModel(medName: "Xanax", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.asNeeded, maxDosage: nil, reminders: true)
         
         let id5 = self.addMedicationToModel(medName: "EveryMin", dosage: 10, dosageUnit: .mg, schedule: .intervalSchedule(interval: 60), maxDosage: nil, reminders: true)
-        self.logDosage(uuid: id5, time: Date() - 60, amount: 10)
+        self.logDosage(uuid: id5, time: Date() - 180, amount: 10)
         
         _ = self.addMedicationToModel(medName: "NextMin", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now + 60), minute: Calendar.current.component(.minute, from: .now + 60)), maxDosage: nil, reminders: true)
         
+        let id6 = self.addMedicationToModel(medName: "Overdue", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now - 60), minute: Calendar.current.component(.minute, from: .now - 60)), maxDosage: nil, reminders: true)
+        self.model.getMedicationByUUID(id6)?.modificationTime = Date() - 120
+        self.logDosage(uuid: id6, time: Date.now - (60 * 60 * 24 + 60) , amount: 10)
+
 
     }
     

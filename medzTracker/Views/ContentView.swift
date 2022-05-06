@@ -30,7 +30,7 @@ struct ContentView: View {
                         NavigationLink {
                             DetailsView(viewModel: viewModel,medication: med)
                         } label: {
-                            MedicationRow(medicine: med)
+                            MedicationRow(medication: med)
                         }
                     }.onDelete(perform:
                                 {indexSet in
@@ -44,6 +44,9 @@ struct ContentView: View {
                         }.font(.title).onTapGesture {
                             //MARK: Secret Button
                             print("tapped On Secret Button")
+                            for medication in viewModel.meds {
+                                viewModel.removeMedication(medication.id)
+                            }
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -92,32 +95,37 @@ private let itemFormatter: DateFormatter = {
 struct MedicationRow : View {
     //init from medication object
     ///lowkey I think *this* is the stuff that should be done in viewController but whatenvs
-    init(medicine inputMed : Medication) {
-        medName = inputMed.name
-        medDosage = inputMed.readableDosage
-        timeDelta = inputMed.getLatestDosage()?.timeSinceDosageString
-        timeOfLastDosage = inputMed.getLatestDosage()?.timeString
-        //TODO: Only show this if its today
-    }
-    //Default Init
-    init(medName: String, medDosage: String?, timeSinceDosage: String?, timeOfLastDosage : String?) {
-        self.medName = medName
-        self.medDosage = medDosage
-        self.timeDelta = timeSinceDosage
-        self.timeOfLastDosage = timeOfLastDosage
-    }
-    
-    var medName : String
-    var medDosage : String?
-    var timeDelta : String?
-    var timeOfLastDosage : String?
+//    init(medicine inputMed : Medication) {
+//        medName = inputMed.name
+//        medDosage = inputMed.readableDosage
+//        timeDelta = inputMed.getLatestDosage()?.timeSinceDosageString
+//        timeOfLastDosage = inputMed.getLatestDosage()?.timeString
+//        //TODO: Only show this if its today
+//    }
+    @StateObject var medication : Medication
+
     var body : some View {
-        VStack{
+        //init some helper vars
+        let medName = medication.name
+        let medDosage = medication.readableDosage
+        let timeOfLastDosage = medication.getLatestDosage()?.timeString
+        let timeDelta = medication.getLatestDosage()?.timeSinceDosageString
+        @State var clockColor :Color = medication.overdue ? .red : .blue
+
+        
+        
+        return VStack{
             HStack {
                 Text(medName)
                     .font(.title3)
                 Spacer()
-                Label(timeDelta ?? "N/A", systemImage: "timer")
+//                Label(timeDelta ?? "N/A", systemImage: "timer")
+                Label {
+                    Text(timeDelta ?? "N/A")
+                } icon: {
+                    Image(systemName: "timer").foregroundColor(clockColor)
+                }
+                    
             }
             if medDosage != nil || timeOfLastDosage != nil{
                 HStack{
@@ -131,7 +139,6 @@ struct MedicationRow : View {
                     }
                 }.font(.subheadline)
                     .foregroundColor(.secondary)
-                
             }
         }
     }
@@ -142,9 +149,6 @@ struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let tracker = MedicineTracker()
         tracker.insertDummyData()
-        
-        
-        
         return ContentView(viewModel: tracker)
     }
 }

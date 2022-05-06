@@ -114,17 +114,17 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         }
     }
     @Published var dosage : Double?
-    var dosageUnit : DosageUnit?
-    var schedule : Schedule
-    var maxDosage : Int?
-    var reminders : Bool
+    @Published var dosageUnit : DosageUnit?
+    @Published var schedule : Schedule
+    @Published var maxDosage : Int?
+    @Published var reminders : Bool
     @Published var pastDoses :[Dosage]
     
-    let modificationTime : Date //Signifies what time the medication was added
+    var modificationTime : Date //Signifies what time the medication was added
     static let calendar = Calendar.autoupdatingCurrent
         
 
-    var readableDosage : String? {
+     var readableDosage : String? {
         if let dosage = dosage, let dosageUnit = dosageUnit {
             return "\(dosage) \(dosageUnit.description)"
         } else {
@@ -164,7 +164,7 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         guard let nextDosageTime = nextDosageTime else {
             return false
         }
-        return Date.now < nextDosageTime
+        return nextDosageTime < Date.now
 
     }
 
@@ -179,20 +179,28 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
                 return nil
             }
         case .specificTime(hour: let hour, minute: let minute):
-            guard let scheduledTimeToday = Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: Date()) else {
-                return nil //There is no way this will return negative, but we need to avoid the optional neatly-ish
-            }
-            //if medication was created today
-            if Medication.calendar.isDateInToday(modificationTime) {
-                //if was created after the time it was scheduled
-                if scheduledTimeToday < modificationTime {
-                    //return tommorow's time
-                    return Medication.calendar.date(byAdding: .day, value: 1, to: scheduledTimeToday)
+            ///Default (assuming created not today and a dosage has been logged)
+            ///Return Date(specificTime for hour and min, latestdosage.date +1 for day)
+            ///exception case: if no dosage logged:
+            ///then if modificationDate is today AND modificationTime < scheduledTimeToday, return scheduleTimeToday
+            /// otherwise sub in modificationTime for latestDosageTime and do above
+            ///then you sub in the modificationTime for the latestDosageTime
+            //If No Dosage Logged
+            guard let latestDosageTime = self.getLatestDosage()?.time else {
+                guard let scheduledTimeToday = Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: Date()) else {
+                    return nil //There is no way this will return negative, but we need to avoid the optional neatly-ish
                 }
-                //otherwise if the current time is passed the scheudleTime, then return the time today
-                return scheduledTimeToday
+                //if modified today earlier than todays scheduled time AND that time is earlier than the time we setup for that schedule
+                if Medication.calendar.isDateInToday(modificationTime) && modificationTime < scheduledTimeToday {
+                    //then return the time today
+                    return scheduledTimeToday
+                } else {
+                    //otherwise return the time 1 day after modificationTime
+                    return Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: modificationTime + (24 * 60 * 60))
+                }
             }
-            return nil //TOOD FIX
+            //If Dosage Logged
+            return Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: latestDosageTime + (24 * 60 * 60))
         case .asNeeded:
             return nil
         }

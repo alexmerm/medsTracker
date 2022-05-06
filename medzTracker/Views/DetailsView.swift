@@ -23,15 +23,14 @@ struct DetailsView: View {
             //Schedule
             
             if medication.schedule.isScheduled() {
-                VStack {
-                    if let nextDosageTime = medication.getNextDosageTime() {
-                        Section {
+                if let nextDosageTime = medication.getNextDosageTime() {
+                    Section {
                         
                         Text("Next Dosage").font(.title2)
                         Text(nextDosageTime.relativeFormattedString).padding(.leading)
-                        }
                     }
                 }
+                
                 Divider()
                 Section {
                     Text("Schedule").font(.title2)
