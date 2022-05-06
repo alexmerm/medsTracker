@@ -15,6 +15,7 @@ struct ContentView: View {
     
     @ObservedObject var viewModel : MedicineTracker //ViewModel will be passed in
     @State var isOnAddingScreen = false
+    @State var fromPushNotificationLocal = false
     
     
     // MARK: Actual View
@@ -22,37 +23,52 @@ struct ContentView: View {
         
         NavigationView {
             
-            List {
-                ForEach(viewModel.meds) {
-                    med in
-                    NavigationLink {
-                        DetailsView(viewModel: viewModel,medication: med)
-                    } label: {
-                        MedicationRow(medicine: med)
+            ZStack {
+                List {
+                    ForEach(viewModel.meds) {
+                        med in
+                        NavigationLink {
+                            DetailsView(viewModel: viewModel,medication: med)
+                        } label: {
+                            MedicationRow(medicine: med)
+                        }
+                    }.onDelete(perform:
+                                {indexSet in
+                        viewModel.removeMedicationsByIndexSet(indexSet: indexSet)})
+                }
+                .toolbar(content: {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        HStack {
+                            Image(systemName: "pills")
+                            Text("MedsTracker")
+                        }.font(.title)
                     }
-                }.onDelete(perform:
-                            {indexSet in
-                          viewModel.removeMedicationsByIndexSet(indexSet: indexSet)})
-            }
-            .toolbar(content: {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        Image(systemName: "pills")
-                        Text("MedsTracker")
-                    }.font(.title)
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: AddMedicineView(viewModel: viewModel, isOnAddingScreen: $isOnAddingScreen), isActive: $isOnAddingScreen) {
+                            Image(systemName: "plus.circle")
+                        }.font(.title2)
+                        
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            viewModel.insertDummyData()
+                        } label: {
+                            Image(systemName: "plus.square")
+                        }.font(.title2)
+                    }
+                })
+                //MARK: Invisible Link to handle Notifications
+                if fromPushNotificationLocal {
+                    NavigationLink(isActive: $fromPushNotificationLocal, destination: {
+                        LogDosageView(viewModel: viewModel, medication: viewModel.getMedicationByUUID(NotificationHandler.shared.medicationIDToLog!)!, timeTaken: Date(), isOnLogView: $fromPushNotificationLocal)
+                        
+                    }, label: {Text("You'll never see this")}
+                                   
+                    ).hidden()
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: AddMedicineView(viewModel: viewModel, isOnAddingScreen: $isOnAddingScreen), isActive: $isOnAddingScreen) {
-                        Image(systemName: "plus.circle")
-                    }.font(.title2)
-                    
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        viewModel.insertDummyData()
-                    } label: {
-                        Image(systemName: "plus.square")
-                    }.font(.title2)
+            }.onReceive(NotificationHandler.shared.$cameFromNotification, perform: {(fromPush) in
+                if fromPush {fromPushNotificationLocal = true
+                    print("receieved message, logging : \(NotificationHandler.shared.medicationIDToLog?.uuidString ?? "nil")")
                 }
             })
         }.navigationViewStyle(StackNavigationViewStyle()) //need this so it displays correct on iPad

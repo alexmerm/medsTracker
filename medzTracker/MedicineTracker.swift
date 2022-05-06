@@ -24,6 +24,8 @@ class MedicineTracker : ObservableObject {
     //Creates the model
     @Published private(set) var model : Model  //this shouldn't init here but for now it does
     private(set)var scheduler : Scheduler
+    
+    
     //non-static function to load data
     func loadData() {
         debugPrint("Loading Data")

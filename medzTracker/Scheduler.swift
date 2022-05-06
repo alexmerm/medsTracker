@@ -9,12 +9,10 @@ import Foundation
 import SwiftUI
 import UserNotifications
 
-//MADE IT A Class lmao
 class Scheduler {
     
     ///medID : [NotificationId]
     var notificationIDs : [UUID: [String]] = [:]
-
     
     ///Load notifications from backend, stores them in notificationIDs, and then scheudle all meds
     func loadExistingNotificationsFromSystemAndScheduleAll(medications : [Medication]) {
@@ -59,11 +57,12 @@ class Scheduler {
             //remove from store too
             //this is not async...
             self.notificationIDs[medication.id] = []
+            print("Notifications for \(medication.name) removed")
         }
     }
-                                                                          
-                                                                          
-
+    
+    
+    
     ///Store Notificaiton in notificationIDs
     private func storeNotification(medicationID: UUID, notificationID: String) {
         //If not there, create the arr
@@ -78,7 +77,7 @@ class Scheduler {
     func getNotificationPermissions() {
         NotificationHandler.shared.requestPermission()
     }
-
+    
     
     ///Loads all pending notifications from system and returns them in useful format
     private static func getNotificationsFromSystem(completion: @escaping (Result<[UUID: [String]],Error>) -> Void) {
@@ -112,6 +111,7 @@ class Scheduler {
         let uuid = UUID() //Notification UUID
         let request = UNNotificationRequest(identifier: uuid.uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
+        print("Scheduled Notification for \(medication.name)")
         //Append to notificationIDS
         self.storeNotification(medicationID: medication.id, notificationID: uuid.uuidString)
         return uuid
@@ -136,18 +136,13 @@ class Scheduler {
         precondition(medication.schedule.isScheduled())
         //for intervals
         
-        if case Medication.Schedule.intervalSchedule(interval: let interval) = medication.schedule {
-            //if logged in last  min or never logged at all, schedi;e as interval, otherwise scjedi;e as date
-            if medication.getLatestDosage() == nil || Date.now - 60 < medication.getLatestDosage()!.time {
-                return UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: true)
-            }
-            else {
-                //logged over an hr ago , Generate Inteval as Calendar
-                if let triggerTime = medication.getNextDosageTime() {
-                    return UNCalendarNotificationTrigger(dateMatching: triggerTime.asDateComponents, repeats: false)
-                } else {
-                    return nil
-                }
+        if case Medication.Schedule.intervalSchedule(interval: _) = medication.schedule {
+            //Always Log as Date, bc it shouldn't trigger if u didn't take prev one
+            //logged over an hr ago , Generate Inteval as Calendar
+            if let triggerTime = medication.getNextDosageTime() {
+                return UNCalendarNotificationTrigger(dateMatching: triggerTime.asDateComponents, repeats: false)
+            } else {
+                return nil
             }
         } else if case Medication.Schedule.specificTime(hour: let hour, minute: let minute) = medication.schedule {
             return UNCalendarNotificationTrigger(dateMatching: DateComponents(hour: hour, minute: minute), repeats: true)
