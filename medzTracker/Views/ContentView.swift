@@ -108,8 +108,8 @@ struct MedicationRow : View {
         //init some helper vars
         let medName = medication.name
         let medDosage = medication.readableDosage
-        let timeOfLastDosage = medication.getLatestDosage()?.timeString
-        let timeDelta = medication.getLatestDosage()?.timeSinceDosageString
+        let nextDosageTimeString = medication.getNextDosageTime()?.timeOnlyFormattedString
+        let timeDelta = medication.timeUntilNextDosageString
         @State var clockColor :Color = medication.overdue ? .red : .blue
 
         
@@ -127,14 +127,14 @@ struct MedicationRow : View {
                 }
                     
             }
-            if medDosage != nil || timeOfLastDosage != nil{
+            if medDosage != nil || nextDosageTimeString != nil{
                 HStack{
                     if let medDosage = medDosage {
                         Text(medDosage)
                             .padding(.leading)
                     }
                     Spacer()
-                    if let timeOfLastDosage = timeOfLastDosage {
+                    if let timeOfLastDosage = nextDosageTimeString {
                         Text("(\(timeOfLastDosage))")
                     }
                 }.font(.subheadline)

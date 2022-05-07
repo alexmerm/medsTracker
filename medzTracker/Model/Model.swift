@@ -144,9 +144,10 @@ struct Model : Codable {
     }
     
     //MARK: DateFormatters
-    static let dateFormatter : DateFormatter  = DateFormatter()// and this
-    static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()//Need to make this static
+    static let dateFormatter : DateFormatter  = DateFormatter()
+    static let dateComponentsFormatter : DateComponentsFormatter  =  DateComponentsFormatter()
     static let relativeDateFormatter : DateFormatter = DateFormatter()
+    static let fullDateComponentsFormatter : DateComponentsFormatter = DateComponentsFormatter()
     
     func setupDateFormatters() {
         //This modidies these static vars when medsDB is created, so it doesn't need to be done again
@@ -157,6 +158,9 @@ struct Model : Codable {
         Model.relativeDateFormatter.dateStyle = .short
         Model.relativeDateFormatter.timeStyle = .short
         Model.relativeDateFormatter.doesRelativeDateFormatting = true
+        Model.fullDateComponentsFormatter.allowedUnits = [.hour,.minute,.second]
+        Model.fullDateComponentsFormatter.maximumUnitCount = 2
+        Model.fullDateComponentsFormatter.unitsStyle = .full
     }
     
     static func getDateFormatter() -> DateFormatter {

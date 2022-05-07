@@ -204,13 +204,32 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         case .asNeeded:
             return nil
         }
-        
-        
     }
+    
+    var timeUntilNextDosage : TimeInterval? {
+        guard let nextDosageTime = self.getNextDosageTime() else {
+            return nil
+        }
+        return nextDosageTime.timeIntervalSince(Date.now)
+    }
+    
+    var timeUntilNextDosageString : String? {
+        guard let nextDosageTime = getNextDosageTime() else {
+            return nil
+        }
+        return Medication.Dosage.dateComponentsFormatter.string(from: .now,to: nextDosageTime) ?? ""
+    }
+    
+    var timeUntilNextDosageFullString : String? {
+        guard let nextDosageTime = getNextDosageTime() else {
+            return nil
+        }
+        return Model.fullDateComponentsFormatter.string(from: .now, to: nextDosageTime)
+    }
+    
     
     //Equatable protocol
     static func == (lhs: Medication, rhs: Medication) -> Bool {
-        //TODO: Assign like an ID or smth to that you cant have 2 of the same type
         lhs.id == rhs.id
     }
     

@@ -23,11 +23,13 @@ struct DetailsView: View {
             //Schedule
             
             if medication.schedule.isScheduled() {
-                if let nextDosageTime = medication.getNextDosageTime() {
+                if let nextDosageTime = medication.getNextDosageTime(), let timeUntilNextDosageFullString = medication.timeUntilNextDosageFullString {
                     Section {
                         
                         Text("Next Dosage").font(.title2)
+//                        Text("Due in \(timeUntilNextDosageFullString)")
                         Text(nextDosageTime.relativeFormattedString).padding(.leading)
+                        
                     }
                 }
                 
