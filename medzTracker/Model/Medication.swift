@@ -121,7 +121,6 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
     @Published var pastDoses :[Dosage]
     
     var modificationTime : Date //Signifies what time the medication was added
-    static let calendar = Calendar.autoupdatingCurrent
         
 
      var readableDosage : String? {
@@ -187,20 +186,20 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
             ///then you sub in the modificationTime for the latestDosageTime
             //If No Dosage Logged
             guard let latestDosageTime = self.getLatestDosage()?.time else {
-                guard let scheduledTimeToday = Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: Date()) else {
+                guard let scheduledTimeToday = Model.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: Date()) else {
                     return nil //There is no way this will return negative, but we need to avoid the optional neatly-ish
                 }
                 //if modified today earlier than todays scheduled time AND that time is earlier than the time we setup for that schedule
-                if Medication.calendar.isDateInToday(modificationTime) && modificationTime < scheduledTimeToday {
+                if Model.calendar.isDateInToday(modificationTime) && modificationTime < scheduledTimeToday {
                     //then return the time today
                     return scheduledTimeToday
                 } else {
                     //otherwise return the time 1 day after modificationTime
-                    return Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: modificationTime + (24 * 60 * 60))
+                    return Model.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: modificationTime + (24 * 60 * 60))
                 }
             }
             //If Dosage Logged
-            return Medication.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: latestDosageTime + (24 * 60 * 60))
+            return Model.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: latestDosageTime + (24 * 60 * 60))
         case .asNeeded:
             return nil
         }
@@ -225,6 +224,21 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
             return nil
         }
         return Model.fullDateComponentsFormatter.string(from: .now, to: nextDosageTime)
+    }
+    //MARK: STATISTICS
+    var avgTimeTaken : Date {
+        
+        var sum : Double = 0.0
+        pastDoses.forEach { dose in
+            //Get sum of each time (adjusted to be on date Jan 1, 1970 UTC)
+            sum += dose.time.justTimeSince1970
+        }
+        let avg = sum / Double(pastDoses.count)
+        return Date(timeIntervalSince1970: avg)
+    }
+    
+    var avgTimeTakenString : String {
+        return Model.dateFormatter.string(from: avgTimeTaken)
     }
     
     

@@ -23,4 +23,12 @@ extension Date {
         return cal.dateComponents([.hour,.minute,.timeZone,.month,.year,.day,.calendar,.second], from: self)
     }
     
+    var justTimeSince1970 : TimeInterval  {
+        let cal = Calendar.current
+        //Get midnight UTC for this day
+        let startOfDayDouble = cal.startOfDay(for: self).timeIntervalSince1970 + Double(cal.timeZone.secondsFromGMT())
+        //Return this date's time on a standardizedDate
+        return self.timeIntervalSince1970 - startOfDayDouble
+    }
+    
 }

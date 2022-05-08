@@ -169,6 +169,8 @@ struct Model : Codable {
     static func getDateComponentsFormatter() -> DateComponentsFormatter {
         return dateComponentsFormatter
     }
+    //MARK: Calendar
+    static let calendar = Calendar.autoupdatingCurrent
 
 }
 
