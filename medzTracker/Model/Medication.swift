@@ -48,6 +48,16 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
                 return false
             }
         }
+        func isSpecificTime() -> Bool {
+            switch self {
+            case .intervalSchedule(_):
+                return false
+            case .specificTime( _, _):
+                return true
+            case .asNeeded:
+                return false
+            }
+        }
         
         
         
@@ -213,17 +223,25 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
     }
     
     var timeUntilNextDosageString : String? {
-        guard let nextDosageTime = getNextDosageTime() else {
+        guard let timeUntilNextDosage = timeUntilNextDosage else {
             return nil
         }
-        return Medication.Dosage.dateComponentsFormatter.string(from: .now,to: nextDosageTime) ?? ""
+        if timeUntilNextDosage < 0 {
+            return "(\(Medication.Dosage.dateComponentsFormatter.string(from: timeUntilNextDosage * -1)!))"
+        } else {
+            return Medication.Dosage.dateComponentsFormatter.string(from: timeUntilNextDosage)!
+        }
     }
     
     var timeUntilNextDosageFullString : String? {
-        guard let nextDosageTime = getNextDosageTime() else {
+        guard let timeUntilNextDosage = timeUntilNextDosage else {
             return nil
         }
-        return Model.fullDateComponentsFormatter.string(from: .now, to: nextDosageTime)
+        if timeUntilNextDosage < 0 {
+            return "Due \(Model.fullDateComponentsFormatter.string(from: timeUntilNextDosage * -1)!) ago"
+        } else {
+            return "in \(Model.fullDateComponentsFormatter.string(from: timeUntilNextDosage)!)"
+        }
     }
     //MARK: STATISTICS
     var avgTimeTaken : Date {
@@ -234,7 +252,9 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
             sum += dose.time.justTimeSince1970
         }
         let avg = sum / Double(pastDoses.count)
-        return Date(timeIntervalSince1970: avg)
+        //Then adjust average time to today so that it will show correct Dailight Savings Time Info
+        let todayMidnight = Model.calendar.startOfDay(for: .now).timeIntervalSince1970 + Double(Model.calendar.timeZone.secondsFromGMT())
+        return Date(timeIntervalSince1970: avg + todayMidnight)
     }
     
     var avgTimeTakenString : String {

@@ -53,20 +53,17 @@ struct DetailsView: View {
                     Text("Previous Doses").font(.title2)
                     if medication.pastDoses.isEmpty {
                         Text("You haven't taken this yet").padding(.leading)
-                    }
-                    //"Else"
-                    Group {
-                        Divider()
-                        ForEach(medication.pastDoses.reversed().prefix(10), id: \.self) { dosage in
-                            Text("\(dosage.relativeTimeString)").font(.body)
+                    } else {
+                        Group {
                             Divider()
+                            ForEach(medication.pastDoses.reversed().prefix(10), id: \.self) { dosage in
+                                Text("\(dosage.relativeTimeString)").font(.body)
+                                Divider()
+                            }
                         }
-                    }.padding(.leading)
-                    List {
-                        ForEach(medication.pastDoses.reversed().prefix(10), id: \.self) { dosage in
-                            Text("\(dosage.relativeTimeString)")
-                        }
-                    }.listStyle(.inset).listRowSeparator(.hidden)
+                        .padding(.leading)
+                        
+                    }
                 }.onAppear {
                     print("numDoses: \(medication.pastDoses.count)")
                 }
@@ -77,7 +74,7 @@ struct DetailsView: View {
                 Section {
                     Text("Statistics").font(.title2)
                     //TODO: Note this currently is only going to show for medications that are specifictime
-                    if medication.pastDoses.isEmpty, case Medication.Schedule.specificTime(hour: _, minute: _) = medication.schedule  {
+                    if medication.pastDoses.isEmpty || !medication.schedule.isSpecificTime()  {
                         Text("You haven't taken this yet, so we don't have any statistics").padding(.leading)
                     } else {
                         Text("**Average time taken**: \(medication.avgTimeTakenString)")
