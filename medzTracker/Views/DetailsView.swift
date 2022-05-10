@@ -31,7 +31,9 @@ struct DetailsView: View {
     //                        Text("Due in \(timeUntilNextDosageFullString)")
                             Group {
                                 Text(timeUntilNextDosageFullString)
-                                Text(nextDosageTime.relativeFormattedString)
+                                Text("(\(nextDosageTime.relativeFormattedString))").font(.caption).padding(.leading, 2.0)
+                                    
+                                    
                             }.padding(.leading)
                         }
                     }
@@ -48,7 +50,24 @@ struct DetailsView: View {
                     
                 }
                 
+                //MARK: Statistics
                 
+                Section {
+                    Text("Statistics").font(.title2)
+                    //TODO: Note this currently is only going to show for medications that are specifictime
+                    if !medication.schedule.isSpecificTime() {
+                        Text("Statistics aren't available for this kind of medication yet").padding(.leading)
+                    }
+                    else if medication.pastDoses.isEmpty {
+                        Text("You haven't taken this yet, so we don't have any statistics").padding(.leading)
+                    } else {
+                        Text("**Average time taken**: \(medication.avgTimeTakenString)")
+                        Text("This is on average  \(medication.timeFromScheduledDoseString ?? "")").padding(.leading)
+                    }
+                    Divider()
+                }
+                
+
                 Section {
                     Text("Previous Doses").font(.title2)
                     if medication.pastDoses.isEmpty {
@@ -68,18 +87,7 @@ struct DetailsView: View {
                     print("numDoses: \(medication.pastDoses.count)")
                 }
 
-                Divider()
-                //MARK: Statistics
-                
-                Section {
-                    Text("Statistics").font(.title2)
-                    //TODO: Note this currently is only going to show for medications that are specifictime
-                    if medication.pastDoses.isEmpty || !medication.schedule.isSpecificTime()  {
-                        Text("You haven't taken this yet, so we don't have any statistics").padding(.leading)
-                    } else {
-                        Text("**Average time taken**: \(medication.avgTimeTakenString)")
-                    }
-                }
+
                 
                 Spacer()
             }.padding()
@@ -107,7 +115,7 @@ struct DetailsView_Previews: PreviewProvider {
         let tracker = MedicineTracker()
         tracker.insertDummyData()
         return Group{
-            ForEach(tracker.meds) { med in
+            ForEach(tracker.meds.prefix(10)) { med in
                 NavigationView {
                     DetailsView(viewModel: tracker, medication: med)
                 }

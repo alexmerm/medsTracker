@@ -17,6 +17,8 @@ struct ContentView: View {
     @State var isOnAddingScreen = false
     @State var fromPushNotificationLocal = false
     
+    @State var isShowingExtraButton = false
+    
     
     // MARK: Actual View
     var body: some View {
@@ -44,9 +46,13 @@ struct ContentView: View {
                         }.font(.title).onTapGesture {
                             //MARK: Secret Button
                             print("tapped On Secret Button")
+                            isShowingExtraButton.toggle()
+                        }.onLongPressGesture {
+                            print("held on scret button")
                             for medication in viewModel.meds {
                                 viewModel.removeMedication(medication.id)
                             }
+                            viewModel.saveData()
                         }
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -55,12 +61,18 @@ struct ContentView: View {
                         }.font(.title2)
                         
                     }
+                    
                     ToolbarItem(placement: .navigationBarTrailing) {
+                        if isShowingExtraButton {
                         Button {
                             viewModel.insertDummyData()
                         } label: {
                             Image(systemName: "plus.square")
                         }.font(.title2)
+                        }
+                        else {
+                            EmptyView()
+                        }
                     }
                 })
                 //MARK: Invisible Link to handle Notifications

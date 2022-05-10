@@ -20,7 +20,7 @@ class MedsDBTest: XCTestCase {
     func testLatestDosage() throws {
         let time2 = Date() - 200
         //sleep(2)
-        var med : Medication =  db.getMedicationByUUID(medID)!
+        let med : Medication =  db.getMedicationByUUID(medID)!
         med.logDosage(time: time2, amount: 10)
         XCTAssert(med.getLatestDosage()!.time == time2)
         print(med.getLatestDosage()!.timeSinceDosageString)

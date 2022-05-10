@@ -32,3 +32,11 @@ extension Date {
     }
     
 }
+
+extension TimeInterval {
+    static var fullDateComponentsFormatter = Model.fullDateComponentsFormatter
+    
+    var fullString : String {
+        return TimeInterval.fullDateComponentsFormatter.string(from: self) ?? ""
+    }
+}

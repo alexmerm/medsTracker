@@ -158,7 +158,7 @@ struct Model : Codable {
         Model.relativeDateFormatter.dateStyle = .short
         Model.relativeDateFormatter.timeStyle = .short
         Model.relativeDateFormatter.doesRelativeDateFormatting = true
-        Model.fullDateComponentsFormatter.allowedUnits = [.hour,.minute,.second]
+        Model.fullDateComponentsFormatter.allowedUnits = [.hour,.minute]
         Model.fullDateComponentsFormatter.maximumUnitCount = 2
         Model.fullDateComponentsFormatter.unitsStyle = .full
     }

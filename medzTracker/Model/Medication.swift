@@ -261,6 +261,24 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         return Model.dateFormatter.string(from: avgTimeTaken)
     }
     
+    var timeFromScheduledDose : TimeInterval? {
+        guard case Schedule.specificTime(hour: let hour, minute: let minute) = schedule else {
+            return nil
+        }
+        let schedToday = Model.calendar.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!
+        return avgTimeTaken.timeIntervalSince(schedToday)
+    }
+    var timeFromScheduledDoseString : String? {
+        guard let timeFromScheduledDose = timeFromScheduledDose else {
+            return nil
+        }
+        if timeFromScheduledDose < 0 {
+            return "\(timeFromScheduledDose.fullString) earlier than scheduled"
+        } else {
+            return "\(timeFromScheduledDose.fullString) later than scheduled"
+        }
+    }
+    
     
     //Equatable protocol
     static func == (lhs: Medication, rhs: Medication) -> Bool {
