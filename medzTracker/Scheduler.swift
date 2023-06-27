@@ -49,13 +49,12 @@ class Scheduler {
         return scheduleNotification(medication: medication)
     }
     
-    //Remove all existing Notifications for this medication
+    ///Remove all existing Notifications for this medication
     func removeMedicationsNotifications(medication : Medication) {
         //Remove all notifations for med by ID
         if let ids = self.notificationIDs[medication.id] {
             UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ids)
             //remove from store too
-            //this is not async...
             self.notificationIDs[medication.id] = []
             print("Notifications for \(medication.name) removed")
         }
@@ -63,7 +62,7 @@ class Scheduler {
     
     
     
-    ///Store Notificaiton in notificationIDs
+    ///Store Notifications in notificationIDs
     private func storeNotification(medicationID: UUID, notificationID: String) {
         //If not there, create the arr
         if notificationIDs[medicationID] == nil {
@@ -120,7 +119,7 @@ class Scheduler {
     ///Generates Notification Content for Medication
     static private func generateNotificationContent(medication : Medication) -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        content.title = "\(medication.name)"
+        content.title = "\(medication.name) Reminder"
         content.subtitle = "It's time to take your \(medication.name)!"
         content.sound = UNNotificationSound.default
         content.interruptionLevel = .timeSensitive
@@ -135,7 +134,6 @@ class Scheduler {
         //only run this on notifications with scheduled
         precondition(medication.schedule.isScheduled())
         //for intervals
-        
         if case Medication.Schedule.intervalSchedule(interval: _) = medication.schedule {
             //Always Log as Date, bc it shouldn't trigger if u didn't take prev one
             //logged over an hr ago , Generate Inteval as Calendar

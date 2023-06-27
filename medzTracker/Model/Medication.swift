@@ -10,21 +10,8 @@ import Foundation
 
 
 class Medication : Equatable,Identifiable, Codable, ObservableObject {
-    //Default Initializer
-    internal init(name: String, dosage: Double? = nil, dosageUnit: Medication.DosageUnit? = nil, schedule: Medication.Schedule, maxDosage: Int? = nil, reminders: Bool, pastDoses: [Medication.Dosage]) {
-        self.id = UUID()
-        self.name = name
-        self.dosage = dosage
-        self.dosageUnit = dosageUnit
-        self.schedule = schedule
-        self.maxDosage = maxDosage
-        self.reminders = reminders
-        self.pastDoses = pastDoses
-        self.modificationTime = Date()
-    }
-    
-    //ID
-    let id : UUID
+    ///Helper Enums
+    ///Schedule Type
     enum Schedule : Hashable, Codable {
         case intervalSchedule(interval: TimeInterval)
         case specificTime(hour: Int, minute: Int) //store in 24hourTime
@@ -59,15 +46,14 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
             }
         }
         
-        
-        
+        ///Date Formatters
         static var dateComponentsFormatterFull : DateComponentsFormatter = DateComponentsFormatter()
         static func getDateComponentsFormatterFull() -> DateComponentsFormatter {
             dateComponentsFormatterFull.unitsStyle = .full
             return dateComponentsFormatterFull
         }
         
-        
+        ///Shedule in Human Readable Form
         var readableSchedule : String? {
             switch self {
             case .intervalSchedule(let interval):
@@ -82,8 +68,7 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         }
         
     }
-    //define variables
-    @Published var name : String
+    ///Unit of Donsage
     enum DosageUnit : CaseIterable, Hashable, Codable {
         static var allCases: [DosageUnit] {
             return [mg, mcg, g,kg,ml,L,cc,pills,tablets] //Excluding other unit
@@ -123,24 +108,7 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
             }
         }
     }
-    @Published var dosage : Double?
-    @Published var dosageUnit : DosageUnit?
-    @Published var schedule : Schedule
-    @Published var maxDosage : Int?
-    @Published var reminders : Bool
-    @Published var pastDoses :[Dosage]
-    
-    var modificationTime : Date //Signifies what time the medication was added
-        
-
-     var readableDosage : String? {
-        if let dosage = dosage, let dosageUnit = dosageUnit {
-            return "\(dosage) \(dosageUnit.description)"
-        } else {
-            return nil
-        }
-    }
-
+    ///Each Instance that a mediciation was taken
     struct Dosage : Codable, Hashable {
         var time : Date
         var amount : Double?
@@ -157,6 +125,40 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         }
     }
     
+    
+    //Default Initializer
+    internal init(name: String, dosage: Double? = nil, dosageUnit: Medication.DosageUnit? = nil, schedule: Medication.Schedule, maxDosage: Int? = nil, reminders: Bool, pastDoses: [Medication.Dosage]) {
+        self.id = UUID()
+        self.name = name
+        self.dosage = dosage
+        self.dosageUnit = dosageUnit
+        self.schedule = schedule
+        self.maxDosage = maxDosage
+        self.reminders = reminders
+        self.pastDoses = pastDoses
+        self.modificationTime = Date()
+    }
+    
+    ///Variables
+    //ID
+    let id : UUID
+    @Published var name : String
+    @Published var dosage : Double?
+    @Published var dosageUnit : DosageUnit?
+    @Published var schedule : Schedule
+    @Published var maxDosage : Int?
+    @Published var reminders : Bool
+    @Published var pastDoses :[Dosage]
+    
+    var modificationTime : Date //Signifies what time the medication was added
+    ///Dosage amount in Readable Terms
+     var readableDosage : String? {
+        if let dosage = dosage, let dosageUnit = dosageUnit {
+            return "\(dosage) \(dosageUnit.description)"
+        } else {
+            return nil
+        }
+    }
     func logDosage(time : Date, amount : Double?) {
         pastDoses.append(Dosage(time: time, amount: amount))
         //In theory, this should go from back of the array and insert at a sorted place, but I'm not doing that right this second
@@ -168,6 +170,7 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         return pastDoses.last
     }
     
+    ///True if medication is overdue
     var overdue : Bool {
         let nextDosageTime = getNextDosageTime()
         guard let nextDosageTime = nextDosageTime else {
@@ -176,9 +179,8 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
         return nextDosageTime < Date.now
 
     }
-
     
-    
+    //Determines next time notificiation is due
     func getNextDosageTime() -> Date? {
         switch schedule {
         case .intervalSchedule(let interval): // return latestDosage + Interval, if its never been taken, return nothing
@@ -278,7 +280,6 @@ class Medication : Equatable,Identifiable, Codable, ObservableObject {
             return "\(timeFromScheduledDose.fullString) later than scheduled"
         }
     }
-    
     
     //Equatable protocol
     static func == (lhs: Medication, rhs: Medication) -> Bool {

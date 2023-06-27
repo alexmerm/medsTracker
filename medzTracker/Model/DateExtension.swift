@@ -7,6 +7,8 @@
 
 import Foundation
 
+
+///Extension of Date struct used throughout project for formatting Date values
 extension Date {
     
     static var relativeDateFormatter = Model.relativeDateFormatter

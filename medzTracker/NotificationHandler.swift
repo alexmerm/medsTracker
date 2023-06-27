@@ -15,8 +15,8 @@ class NotificationHandler : NSObject, UNUserNotificationCenterDelegate, Observab
     @Published var medicationIDToLog : UUID? = nil
     
     
-    //MARK: Funcs for handling Notifications
-    //When CLICKED from backgrouns
+    //MARK: Functions for handling Notifications
+    //called when CLICKED from background
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response:
                                 UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
         //response.notification.request.content.threadIdentifier //use this to get to screen
@@ -41,6 +41,7 @@ class NotificationHandler : NSObject, UNUserNotificationCenterDelegate, Observab
 
 
 extension NotificationHandler  {
+    ///Requests permission to send notifications
     func requestPermission(){
         let center = UNUserNotificationCenter.current()
         center.requestAuthorization(options: [.sound,.alert,.badge]) { success, error in

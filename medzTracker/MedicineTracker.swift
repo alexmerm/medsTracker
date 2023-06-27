@@ -17,16 +17,12 @@ class MedicineTracker : ObservableObject {
         self.loadData()
     }
     
-    // We Serialize+Deserialize the entire MedsDB Class, even tho we don't have to
-
-    
-    //private(set) means other things can see the model but can't change it
     //Creates the model
-    @Published private(set) var model : Model  //this shouldn't init here but for now it does
+    @Published private(set) var model : Model
     private(set)var scheduler : Scheduler
     
     
-    //non-static function to load data
+    //non-static function to load data and setup notifications
     func loadData() {
         debugPrint("Loading Data")
         Model.load(completion: { [self] result in
@@ -46,6 +42,7 @@ class MedicineTracker : ObservableObject {
         })
     }
 
+    ///Save data
     func saveData() {
         debugPrint("saving Data")
         Model.save(medsDB: model) { result in
@@ -54,11 +51,8 @@ class MedicineTracker : ObservableObject {
             }
         }
     }
-    
 
-    
-
-    
+    //Trigger Notification Updates for a Medication
     func updateMedNotificationsByUUID(medID: UUID) -> UUID? {
         if let med = getMedicationByUUID(medID) {
             return scheduler.updateMedicationNotications(medication: med)
@@ -67,11 +61,7 @@ class MedicineTracker : ObservableObject {
     }
     
     
-    
-    
-    ///These Methods are for intents from the view to modify or access the model
-
-    //Add Medication to model
+    ///Add Medication to model
     func addMedicationToModel(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool) -> UUID {
         let newMedID =  model.addMedication(medName: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders)
         self.saveData()
@@ -79,19 +69,24 @@ class MedicineTracker : ObservableObject {
         return newMedID
     }
     
+    ///Access function for Medications
     func getMedicationByUUID(_ uuid : UUID)  -> Medication?{
         model.getMedicationByUUID(uuid)
     }
     
+    ///Log Dosage of Medication
     func logDosage(uuid : UUID, time : Date, amount : Double?) {
         model.logDosage(uuid, time: time, amount: amount)
         let _ = updateMedNotificationsByUUID(medID: uuid)
         self.saveData()
     }
     
+    ///Access Array of Medications
     var meds: [Medication] {
         return model.medications
     }
+    
+    ///Remove Medication by ID
     func removeMedication(_ uuid : UUID) -> Void {
         if let med = getMedicationByUUID(uuid) {
             scheduler.removeMedicationsNotifications(medication: med)
@@ -99,6 +94,7 @@ class MedicineTracker : ObservableObject {
         model.removeMedication(uuid)
     }
     
+    ///Remove Medication By Index Set
     func removeMedicationsByIndexSet(indexSet: IndexSet) {
         for med in model.getMedicationsByIndexSet(indexSet) {
             scheduler.removeMedicationsNotifications(medication: med)
@@ -107,31 +103,37 @@ class MedicineTracker : ObservableObject {
     }
     
     
+    ///Inserts Data for Testing Purposes
     func insertDummyData() {
-//        let id1 = self.addMedicationToModel(medName: "Adderall IR", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
-//        self.logDosage(uuid: id1, time: Date() - 400, amount: 10)
-//        self.logDosage(uuid: id1, time: Date() - 400 - (60 * 60 * 4), amount: 10)
-//
-//        let id2 = self.addMedicationToModel(medName: "Claratin", dosage: nil, dosageUnit: nil, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
-//        self.logDosage(uuid: id2, time: Date() - 400, amount: 10)
-//        let id3 = self.addMedicationToModel(medName: "Sudafed", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
-//        self.logDosage(uuid: id3, time: Date() - 200, amount: 10)
-//
-//        let id4 = self.addMedicationToModel(medName: "Cymbalta", dosage: 60, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.specificTime(hour: 9, minute: 30), maxDosage: 60, reminders: true)
-//        self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date())!, amount: 60)
-//        self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date() - TimeInterval(60 * 60 * 24))!, amount: 60)
-//
-//        let _ = self.addMedicationToModel(medName: "Xanax", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.asNeeded, maxDosage: nil, reminders: true)
-//
-//        let id5 = self.addMedicationToModel(medName: "EveryMin", dosage: 10, dosageUnit: .mg, schedule: .intervalSchedule(interval: 60), maxDosage: nil, reminders: true)
-//        self.logDosage(uuid: id5, time: Date() - 180, amount: 10)
-//
-//        _ = self.addMedicationToModel(medName: "NextMin", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now + 60), minute: Calendar.current.component(.minute, from: .now + 60)), maxDosage: nil, reminders: true)
-//
-//        let id6 = self.addMedicationToModel(medName: "Overdue", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now - 60), minute: Calendar.current.component(.minute, from: .now - 60)), maxDosage: nil, reminders: true)
-//        self.model.getMedicationByUUID(id6)?.modificationTime = Date() - 120
-//        self.logDosage(uuid: id6, time: Date.now - (60 * 60 * 24 + 60) , amount: 10)
+        let id1 = self.addMedicationToModel(medName: "Adderall IR", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
+        self.logDosage(uuid: id1, time: Date() - 400, amount: 10)
+        self.logDosage(uuid: id1, time: Date() - 400 - (60 * 60 * 4), amount: 10)
+
+        let id2 = self.addMedicationToModel(medName: "Claratin", dosage: nil, dosageUnit: nil, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
+        self.logDosage(uuid: id2, time: Date() - 400, amount: 10)
+        let id3 = self.addMedicationToModel(medName: "Sudafed", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.intervalSchedule(interval: TimeInterval(60 * 60 * 4)), maxDosage: 60, reminders: true)
+        self.logDosage(uuid: id3, time: Date() - 200, amount: 10)
+
+        let id4 = self.addMedicationToModel(medName: "Cymbalta", dosage: 60, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.specificTime(hour: 9, minute: 30), maxDosage: 60, reminders: true)
+        self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date())!, amount: 60)
+        self.logDosage(uuid: id4, time: Calendar.current.date(bySettingHour: 9, minute: 30, second: 0, of: Date() - TimeInterval(60 * 60 * 24))!, amount: 60)
+
+        let _ = self.addMedicationToModel(medName: "Xanax", dosage: 10, dosageUnit: Medication.DosageUnit.mg, schedule: Medication.Schedule.asNeeded, maxDosage: nil, reminders: true)
+
+        let id5 = self.addMedicationToModel(medName: "EveryMin", dosage: 10, dosageUnit: .mg, schedule: .intervalSchedule(interval: 60), maxDosage: nil, reminders: true)
+        self.logDosage(uuid: id5, time: Date() - 180, amount: 10)
+
+        _ = self.addMedicationToModel(medName: "NextMin", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now + 60), minute: Calendar.current.component(.minute, from: .now + 60)), maxDosage: nil, reminders: true)
+
+        let id6 = self.addMedicationToModel(medName: "Overdue", dosage: 10, dosageUnit: .mg, schedule: .specificTime(hour: Calendar.current.component(.hour, from: .now - 60), minute: Calendar.current.component(.minute, from: .now - 60)), maxDosage: nil, reminders: true)
+        self.model.getMedicationByUUID(id6)?.modificationTime = Date() - 120
+        self.logDosage(uuid: id6, time: Date.now - (60 * 60 * 24 + 60) , amount: 10)
         
+
+    }
+    
+    ///Inserts data for Demo Purposes
+    func insertDemoData() {
         let tylenol = self.addMedicationToModel(medName: "Tylenol", dosage: 2, dosageUnit: .pills, schedule: .intervalSchedule(interval: 4 * 60 * 60), maxDosage: nil, reminders: true)
         let todayAt1115 = Calendar.current.date(bySettingHour: 11, minute: 30, second: 0, of: Date())!
         self.logDosage(uuid: tylenol, time: todayAt1115, amount: 2)
@@ -150,13 +152,6 @@ class MedicineTracker : ObservableObject {
             let added = Calendar.current.date(byAdding: .minute, value: Int.random(in: 0...44), to: at930)!
             self.logDosage(uuid: melatonin, time: added, amount: 60)
         }
-        
-        
-        
-        
-        
-        
-
 
     }
     

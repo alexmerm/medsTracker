@@ -10,7 +10,7 @@ import Foundation
 //THIS IS THE MODEL
 
 struct Model : Codable {
-    //DB Initializers
+    ///DB Initializers
     init() {
         self.setupDateFormatters()
     }
@@ -23,13 +23,14 @@ struct Model : Codable {
     
     var medications : [Medication] = [] //Store Medications here
     
-    //Returns ID of New Medicaiton
+    ///Returns ID of New Medicaiton
     mutating func addMedication(medName : String, dosage : Double?, dosageUnit : Medication.DosageUnit?, schedule : Medication.Schedule, maxDosage : Int?, reminders : Bool)  -> UUID {
         let med = Medication(name: medName, dosage: dosage, dosageUnit: dosageUnit, schedule: schedule, maxDosage: maxDosage, reminders: reminders, pastDoses: [])
         medications.append(med)
         return med.id
     }
     
+    ///remove medication by ID
     mutating func removeMedication(_ uuid : UUID) -> Void {
         let index = getIndexFromUUID(uuid)
         guard let index = index else {
@@ -38,11 +39,12 @@ struct Model : Codable {
         medications.remove(at: index)
     }
     
+    ///Remove Medication by Index Set
     mutating func removeMedicationByIndexSet(_ indexset: IndexSet) {
         medications.remove(atOffsets: indexset)
     }
     
-    ///get Medications from IndexSet
+    ///get Medications by IndexSet
     func getMedicationsByIndexSet(_ indexset: IndexSet) -> [Medication] {
         var result : [Medication] = []
         indexset.forEach {index in
@@ -71,6 +73,7 @@ struct Model : Codable {
         return nil
     }
     
+    ///Get Mediciation by UUID
     private func getIndexFromUUID(_ uuid : UUID) -> Int? {
         for (index,med) in medications.enumerated(){
             if med.id == uuid {
@@ -82,7 +85,7 @@ struct Model : Codable {
     }
     
     
-    //Log a new dosage of medication with UUID uuid
+    ///Log a new dosage of medication by UUID
     mutating func logDosage(_ uuid : UUID, time : Date, amount : Double?) {
         if let id = getIndexFromUUID(uuid) {
             medications[id].logDosage(time: time, amount: amount)
@@ -96,14 +99,13 @@ struct Model : Codable {
         try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
             .appendingPathComponent("medsDB.data")
     }
-    ///MARK: Changing this to  saving [medication] so i can pass scheduler in.... or do i even need to
-    ///@Escaping means that the closure param will outlive the func its passed into
+    
     ///Loads the Data
     static func load(completion: @escaping (Result<Model,Error>) -> Void) {
         DispatchQueue.global(qos: .background).async {
             do {
                 let fileURL = try fileURL() //the URL of the medsDB DataStore file
-                guard let file = try? FileHandle(forReadingFrom: fileURL) else { //try to load from the file, if it doesn't exist (aka its the initial opening of the app)...return a success with a new Medicaition DB
+                guard let file = try? FileHandle(forReadingFrom: fileURL) else { //try to load from the file, if it doesn't exist (aka its the initial opening of the app)...return a success with a new Medicaition DB for now
                     DispatchQueue.main.async {
                         completion(.success(Model()))
                     }
@@ -116,7 +118,7 @@ struct Model : Codable {
                     completion(.success(medsDB)) //and return it successfully if it succeeds
                 }
             } catch {
-                //and id it fails, return the erorr
+                //and if it fails, return the error
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }

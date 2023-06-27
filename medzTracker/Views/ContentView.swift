@@ -14,10 +14,10 @@ import SwiftUI
 struct ContentView: View {
     
     @ObservedObject var viewModel : MedicineTracker //ViewModel will be passed in
+    //Used to control view programticcaly
     @State var isOnAddingScreen = false
     @State var fromPushNotificationLocal = false
-    
-    @State var isShowingExtraButton = false
+    @State var isShowingExtraButton = false ///for Quickly adding info
     
     
     // MARK: Actual View
@@ -65,7 +65,7 @@ struct ContentView: View {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         if isShowingExtraButton {
                         Button {
-                            viewModel.insertDummyData()
+                            viewModel.insertDemoData()
                         } label: {
                             Image(systemName: "plus.square")
                         }.font(.title2)
@@ -105,15 +105,6 @@ private let itemFormatter: DateFormatter = {
 
 // MARK: Medication Row Definition
 struct MedicationRow : View {
-    //init from medication object
-    ///lowkey I think *this* is the stuff that should be done in viewController but whatenvs
-//    init(medicine inputMed : Medication) {
-//        medName = inputMed.name
-//        medDosage = inputMed.readableDosage
-//        timeDelta = inputMed.getLatestDosage()?.timeSinceDosageString
-//        timeOfLastDosage = inputMed.getLatestDosage()?.timeString
-//        //TODO: Only show this if its today
-//    }
     @StateObject var medication : Medication
 
     var body : some View {

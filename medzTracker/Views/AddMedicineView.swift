@@ -8,6 +8,8 @@
 import SwiftUI
 import Combine
 
+
+///Screen to add Medication
 struct AddMedicineView: View {
     @ObservedObject var viewModel : MedicineTracker
     @Binding var isOnAddingScreen : Bool
